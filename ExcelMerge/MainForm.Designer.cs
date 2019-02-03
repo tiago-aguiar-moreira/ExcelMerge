@@ -76,6 +76,7 @@
             this.lbxSelectedFiles.Location = new System.Drawing.Point(4, 62);
             this.lbxSelectedFiles.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.lbxSelectedFiles.Name = "lbxSelectedFiles";
+            this.lbxSelectedFiles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.lbxSelectedFiles.Size = new System.Drawing.Size(639, 432);
             this.lbxSelectedFiles.TabIndex = 5;
             // 
@@ -113,6 +114,7 @@
             this.btnDelete.TabIndex = 8;
             this.btnDelete.Text = "Remover";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnRun
             // 

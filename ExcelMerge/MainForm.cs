@@ -20,7 +20,6 @@ namespace ExcelMerge
         {
             InitializeComponent();
             lbxSelectedFiles.Items.Add(msgFileList);
-
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -43,8 +42,25 @@ namespace ExcelMerge
                         _addedFile = true;
                         lbxSelectedFiles.Items.Clear();
                     }
-                    
-                    lbxSelectedFiles.Items.AddRange(ofd.FileNames);
+
+                    ofd.FileNames.ToList().ForEach(f => lbxSelectedFiles.Items.Add(f));
+                }
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (lbxSelectedFiles.SelectedItems.Count > 0)
+            {
+                for (int i = lbxSelectedFiles.SelectedItems.Count - 1; i >= 0; i--)
+                {
+                    lbxSelectedFiles.Items.RemoveAt(lbxSelectedFiles.SelectedIndices[i]);
+                }
+
+                if (lbxSelectedFiles.Items.Count <= 0)
+                {
+                    _addedFile = false;
+                    lbxSelectedFiles.Items.Add(msgFileList);
                 }
             }
         }
