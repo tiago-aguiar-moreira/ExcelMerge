@@ -13,9 +13,14 @@ namespace ExcelMerge
 {
     public partial class MainForm : Form 
     {
+        private const string msgFileList = "Arquivos selecionados...";
+        private bool _addedFile = false;
+
         public MainForm()   
         {
             InitializeComponent();
+            lbxSelectedFiles.Items.Add(msgFileList);
+
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -33,6 +38,12 @@ namespace ExcelMerge
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
+                    if (!_addedFile)
+                    {
+                        _addedFile = true;
+                        lbxSelectedFiles.Items.Clear();
+                    }
+                    
                     lbxSelectedFiles.Items.AddRange(ofd.FileNames);
                 }
             }

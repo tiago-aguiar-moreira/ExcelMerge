@@ -73,8 +73,6 @@
             this.lbxSelectedFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbxSelectedFiles.FormattingEnabled = true;
             this.lbxSelectedFiles.ItemHeight = 20;
-            this.lbxSelectedFiles.Items.AddRange(new object[] {
-            "Arquivos selecionados..."});
             this.lbxSelectedFiles.Location = new System.Drawing.Point(4, 62);
             this.lbxSelectedFiles.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.lbxSelectedFiles.Name = "lbxSelectedFiles";
