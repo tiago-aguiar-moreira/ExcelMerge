@@ -126,6 +126,7 @@
             this.btnRun.TabIndex = 7;
             this.btnRun.Text = "Executar";
             this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // tabPage2
             // 

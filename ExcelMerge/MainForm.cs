@@ -1,25 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ExcelMerge
 {
     public partial class MainForm : Form 
     {
-        private const string msgFileList = "Arquivos selecionados...";
+        private const string _msgFileList = "Arquivos selecionados...";
+        private string _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
         private bool _addedFile = false;
 
         public MainForm()   
         {
             InitializeComponent();
-            lbxSelectedFiles.Items.Add(msgFileList);
+            lbxSelectedFiles.Items.Add(_msgFileList);
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -28,7 +24,7 @@ namespace ExcelMerge
 
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                ofd.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+                ofd.InitialDirectory = _directoryApp;
                 //ofd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                 //ofd.FilterIndex = 2;
                 ofd.RestoreDirectory = true;
@@ -60,9 +56,21 @@ namespace ExcelMerge
                 if (lbxSelectedFiles.Items.Count <= 0)
                 {
                     _addedFile = false;
-                    lbxSelectedFiles.Items.Add(msgFileList);
+                    lbxSelectedFiles.Items.Add(_msgFileList);
                 }
             }
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            if (_addedFile)
+            {
+                new Merge().Execute(lbxSelectedFiles.Items.Cast<string>().ToArray(), _directoryApp);
+            }
+            else
+            {
+                MessageBox.Show("Nenhum arquivo arquivo foi adicionado");
+            }            
         }
     }
 }
