@@ -72,5 +72,10 @@ namespace ExcelMerge
                 MessageBox.Show("Nenhum arquivo arquivo foi adicionado");
             }            
         }
+
+        private void configuraçõesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormConfiguration().ShowDialog();
+        }
     }
 }
