@@ -62,11 +62,12 @@
             this.ClientSize = new System.Drawing.Size(426, 76);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbxAction);
+            this.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormConfiguration";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Configurações";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormConfiguration_FormClosing);
             this.Load += new System.EventHandler(this.FormConfiguration_Load);

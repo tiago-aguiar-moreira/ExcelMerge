@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Enumerator\SelectedEndProcessActionEnum.cs" />
     <Compile Include="Utils\EnumUtils.cs" />
+    <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Utils\JSONUtils.cs" />
     <Compile Include="Model\AppConfigModel.cs" />
     <Compile Include="Forms\FormConfiguration.cs">
@@ -104,6 +105,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -116,7 +118,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Excel.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
