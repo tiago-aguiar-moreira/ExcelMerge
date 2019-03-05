@@ -7,6 +7,9 @@ namespace ExcelMerge
 {
     public partial class FormConfiguration : Form
     {
+        private AppConfigModel _appConfig;
+        private AppConfiguration _appConfiguration;
+
         public FormConfiguration()
         {
             InitializeComponent();
@@ -14,9 +17,10 @@ namespace ExcelMerge
 
         private void FormConfiguration_Load(object sender, EventArgs e)
         {
-            var appConfig = AppConfiguration.Load("AppConfig");
+            _appConfiguration = new AppConfiguration();
+            _appConfig = _appConfiguration.Load();
 
-            LoadEndProcessoAction(appConfig.SelectedEndProcessAction);
+            LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);
         }
 
         private void LoadEndProcessoAction(SelectedEndProcessActionEnum selectedEndProcessAction)
@@ -29,6 +33,16 @@ namespace ExcelMerge
             }
 
             cbxAction.SelectedIndex = (int)selectedEndProcessAction;
+        }
+
+        private void FormConfiguration_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _appConfiguration.Save(_appConfig);
+        }
+
+        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _appConfig.SelectedEndProcessAction = (SelectedEndProcessActionEnum)(sender as ComboBox).SelectedIndex;
         }
     }
 }

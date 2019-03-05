@@ -4,20 +4,39 @@ using System.Windows.Forms;
 
 namespace ExcelMerge
 {
-    public static class AppConfiguration
+    public class AppConfiguration
     {
-        private const string ConfigExtension = ".json";
+        private const string ConfigExtension = ".config.json";
 
-        private static string GetDirectoryNameFromExecutable() => Path.GetDirectoryName(Application.ExecutablePath);
+        private string _pathAppConfig;
 
-        public static AppConfigModel Load(string fileNameWithoutExtension)
+        private string GetDirectoryNameFromExecutable() => Path.GetDirectoryName(Application.ExecutablePath);
+
+        private string GetNameConfig() => Path.GetFileNameWithoutExtension(Application.ExecutablePath);
+
+        private string GetPathAppConfig() => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
+
+        public AppConfiguration()
         {
-            string configPath = $"{GetDirectoryNameFromExecutable()}\\{fileNameWithoutExtension}{ConfigExtension}";
+            _pathAppConfig = GetPathAppConfig();
+        }
 
-            if (!File.Exists(configPath))
-                JSONUtils.SaveToFile(new AppConfigModel(), configPath);
+        public AppConfigModel Load()
+        {
+            CreateDefaultConfig();
 
-            return JSONUtils.LoadFromFile<AppConfigModel>(configPath);
+            return JSONUtils.LoadFromFile<AppConfigModel>(_pathAppConfig);
+        }
+
+        private void CreateDefaultConfig()
+        {
+            if (!File.Exists(_pathAppConfig))
+                JSONUtils.SaveToFile(new AppConfigModel(), _pathAppConfig);
+        }
+
+        public void Save(AppConfigModel appConfig)
+        {
+            JSONUtils.SaveToFile(appConfig, _pathAppConfig);
         }
     }
 }
