@@ -16,10 +16,7 @@ namespace ExcelMerge
 
         private string GetPathAppConfig() => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
 
-        public AppConfiguration()
-        {
-            _pathAppConfig = GetPathAppConfig();
-        }
+        public AppConfiguration() => _pathAppConfig = GetPathAppConfig();
 
         public AppConfigModel Load()
         {
@@ -34,9 +31,6 @@ namespace ExcelMerge
                 JSONUtils.SaveToFile(new AppConfigModel(), _pathAppConfig);
         }
 
-        public void Save(AppConfigModel appConfig)
-        {
-            JSONUtils.SaveToFile(appConfig, _pathAppConfig);
-        }
+        public void Save(AppConfigModel appConfig) => JSONUtils.SaveToFile(appConfig, _pathAppConfig);
     }
 }

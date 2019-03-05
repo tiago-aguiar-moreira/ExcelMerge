@@ -1,4 +1,6 @@
-﻿using ExcelMerge.Utils;
+﻿using ExcelMerge.Enumerator;
+using System.Diagnostics;
+using ExcelMerge.Utils;
 using System;
 using System.Data;
 using System.IO;
@@ -13,7 +15,7 @@ namespace ExcelMerge
         private string _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
         private bool _addedFile = false;
 
-        public MainForm()   
+        public MainForm()
         {
             InitializeComponent();
             this.SetBasicConfigs();
@@ -67,12 +69,53 @@ namespace ExcelMerge
         {
             if (_addedFile)
             {
-                new Merge().Execute(lbxSelectedFiles.Items.Cast<string>().ToArray(), _directoryApp);
+                string newFile = new Merge().Execute(lbxSelectedFiles.Items.Cast<string>().ToArray(), _directoryApp);
+                ExecuteAction(newFile, new AppConfiguration().Load().SelectedEndProcessAction);
             }
             else
             {
                 MessageBox.Show("Nenhum arquivo arquivo foi adicionado");
             }            
+        }
+
+        private void ExecuteAction(string path, SelectedEndProcessActionEnum processAction)
+        {
+            switch (processAction)
+            {
+                case SelectedEndProcessActionEnum.None:
+                    break;
+                case SelectedEndProcessActionEnum.OpenFile:
+                    Process.Start(path);
+                    break;
+                case SelectedEndProcessActionEnum.OpenDir:
+                    Process.Start(Path.GetDirectoryName(path));
+                    break;
+                case SelectedEndProcessActionEnum.AskIfShouldOpenFile:
+                    if (MessageBox.Show(
+                        this,
+                        "Deseja abrir o arquivo gerado?", 
+                        "Ação ao fim do processamento", 
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        Process.Start(path);
+                    }
+                    break;
+                case SelectedEndProcessActionEnum.AskIfShouldOpenDir:
+                    if (MessageBox.Show(
+                        this,
+                        "Deseja abrir o diretório onde o arquivo foi gerado?", 
+                        "Ação ao fim do processamento", 
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        Process.Start(Path.GetDirectoryName(path));
+                    }
+                    break;
+                default:
+                    MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nRevise sua configrurações.");
+                    break;
+            }
         }
 
         private void configuraçõesToolStripMenuItem_Click(object sender, EventArgs e)
