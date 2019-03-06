@@ -45,6 +45,12 @@
     <Reference Include="FastMember, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\FastMember.1.3.0\lib\net45\FastMember.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft-WindowsAPICodePack-Core.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.3.3, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft-WindowsAPICodePack-Shell.1.1.3.3\lib\net452\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -81,7 +87,7 @@
     <Compile Include="Forms\FormConfiguration.Designer.cs">
       <DependentUpon>FormConfiguration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\AppConfiguration.cs" />
+    <Compile Include="Configuration\AppConfigurationManager.cs" />
     <Compile Include="Merge.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -120,6 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Excel.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Folder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

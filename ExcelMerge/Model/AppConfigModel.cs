@@ -1,11 +1,16 @@
 ﻿using ExcelMerge.Enumerator;
 
-namespace ExcelMerge
+namespace ExcelMerge.Model
 {
     public class AppConfigModel
     {
         public SelectedEndProcessActionEnum SelectedEndProcessAction { get; set; }
+        public string DefaultDirectorySaveFiles { get; set; }
 
-        public AppConfigModel() => SelectedEndProcessAction = SelectedEndProcessActionEnum.None;
-    }    
+        public AppConfigModel()
+        {
+            SelectedEndProcessAction = SelectedEndProcessActionEnum.None;
+            DefaultDirectorySaveFiles = string.Empty;
+        }
+    }
 }

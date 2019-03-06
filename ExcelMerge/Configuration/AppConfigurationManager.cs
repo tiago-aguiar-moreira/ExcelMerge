@@ -1,10 +1,11 @@
-﻿using ExcelMerge.Utils;
+﻿using ExcelMerge.Model;
+using ExcelMerge.Utils;
 using System.IO;
 using System.Windows.Forms;
 
-namespace ExcelMerge
+namespace ExcelMerge.Configuration
 {
-    public class AppConfiguration
+    public class AppConfigurationManager
     {
         private const string ConfigExtension = ".config.json";
 
@@ -16,7 +17,7 @@ namespace ExcelMerge
 
         private string GetPathAppConfig() => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
 
-        public AppConfiguration() => _pathAppConfig = GetPathAppConfig();
+        public AppConfigurationManager() => _pathAppConfig = GetPathAppConfig();
 
         public AppConfigModel Load()
         {

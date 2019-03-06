@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ExcelMerge.Configuration;
 
 namespace ExcelMerge
 {
@@ -69,13 +70,18 @@ namespace ExcelMerge
         {
             if (_addedFile)
             {
-                string newFile = new Merge().Execute(lbxSelectedFiles.Items.Cast<string>().ToArray(), _directoryApp);
-                ExecuteAction(newFile, new AppConfiguration().Load().SelectedEndProcessAction);
+                var appConfigManager = new AppConfigurationManager().Load();
+
+                string newFile = new Merge().Execute(
+                    lbxSelectedFiles.Items.Cast<string>().ToArray(),
+                    string.IsNullOrEmpty(appConfigManager.DefaultDirectorySaveFiles) ? _directoryApp : appConfigManager.DefaultDirectorySaveFiles);
+
+                ExecuteAction(newFile, appConfigManager.SelectedEndProcessAction);
             }
             else
             {
                 MessageBox.Show("Nenhum arquivo arquivo foi adicionado");
-            }            
+            }
         }
 
         private void ExecuteAction(string path, SelectedEndProcessActionEnum processAction)
@@ -93,8 +99,8 @@ namespace ExcelMerge
                 case SelectedEndProcessActionEnum.AskIfShouldOpenFile:
                     if (MessageBox.Show(
                         this,
-                        "Deseja abrir o arquivo gerado?", 
-                        "Ação ao fim do processamento", 
+                        "Ação ao fim do processamento",
+                        "Deseja abrir o arquivo gerado?",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {
@@ -104,8 +110,8 @@ namespace ExcelMerge
                 case SelectedEndProcessActionEnum.AskIfShouldOpenDir:
                     if (MessageBox.Show(
                         this,
-                        "Deseja abrir o diretório onde o arquivo foi gerado?", 
-                        "Ação ao fim do processamento", 
+                        "Ação ao fim do processamento",
+                        "Deseja abrir o diretório onde o arquivo foi gerado?",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {
