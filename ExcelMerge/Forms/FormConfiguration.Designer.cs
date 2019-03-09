@@ -47,7 +47,7 @@
             this.cbxAction.Location = new System.Drawing.Point(13, 34);
             this.cbxAction.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxAction.Name = "cbxAction";
-            this.cbxAction.Size = new System.Drawing.Size(415, 28);
+            this.cbxAction.Size = new System.Drawing.Size(527, 28);
             this.cbxAction.TabIndex = 0;
             this.cbxAction.SelectedIndexChanged += new System.EventHandler(this.cbxAction_SelectedIndexChanged);
             // 
@@ -76,8 +76,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDefaultDirectorySaveFiles.Location = new System.Drawing.Point(12, 90);
             this.txtDefaultDirectorySaveFiles.Name = "txtDefaultDirectorySaveFiles";
-            this.txtDefaultDirectorySaveFiles.Size = new System.Drawing.Size(370, 26);
+            this.txtDefaultDirectorySaveFiles.Size = new System.Drawing.Size(482, 26);
             this.txtDefaultDirectorySaveFiles.TabIndex = 1;
+            this.txtDefaultDirectorySaveFiles.TextChanged += new System.EventHandler(this.txtDefaultDirectorySaveFiles_TextChanged);
             this.txtDefaultDirectorySaveFiles.Validating += new System.ComponentModel.CancelEventHandler(this.txtDefaultDirectorySaveFiles_Validating);
             // 
             // btnBrowserFolder
@@ -85,7 +86,7 @@
             this.btnBrowserFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowserFolder.ImageIndex = 0;
             this.btnBrowserFolder.ImageList = this.imgList;
-            this.btnBrowserFolder.Location = new System.Drawing.Point(389, 76);
+            this.btnBrowserFolder.Location = new System.Drawing.Point(501, 76);
             this.btnBrowserFolder.Name = "btnBrowserFolder";
             this.btnBrowserFolder.Size = new System.Drawing.Size(40, 40);
             this.btnBrowserFolder.TabIndex = 2;
@@ -102,7 +103,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(441, 131);
+            this.ClientSize = new System.Drawing.Size(553, 131);
             this.Controls.Add(this.btnBrowserFolder);
             this.Controls.Add(this.txtDefaultDirectorySaveFiles);
             this.Controls.Add(this.label2);
@@ -110,6 +111,7 @@
             this.Controls.Add(this.cbxAction);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

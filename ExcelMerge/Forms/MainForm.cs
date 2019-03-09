@@ -1,87 +1,89 @@
-﻿using ExcelMerge.Enumerator;
-using System.Diagnostics;
+﻿using ExcelMerge.Configuration;
+using ExcelMerge.Enumerator;
 using ExcelMerge.Utils;
 using System;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using ExcelMerge.Configuration;
 
 namespace ExcelMerge
 {
-    public partial class MainForm : Form 
+    public partial class MainForm : Form
     {
-        private const string _msgFileList = "Arquivos selecionados...";
-        private string _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
-        private bool _addedFile = false;
+        private string _directoryApp;
+        private BindingList<string> _listFiles;
+        private ListChangedType[] listEvents = new ListChangedType[]
+        {
+            ListChangedType.ItemAdded,
+            ListChangedType.ItemDeleted,
+            ListChangedType.Reset
+        };
 
         public MainForm()
         {
             InitializeComponent();
             this.SetBasicConfigs();
-            lbxSelectedFiles.Items.Add(_msgFileList);
+
+            _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
+
+            _listFiles = new BindingList<string>();
+            _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
+
+            lbxFiles.DataSource = _listFiles;
+        }
+
+        private void list_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (listEvents.Contains(e.ListChangedType))
+            {
+                btnDeleteAll.Enabled = _listFiles.Any();
+                btnDelete.Enabled = _listFiles.Any();
+                btnRun.Enabled = _listFiles.Any();
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            var filePath = string.Empty;
-
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.InitialDirectory = _directoryApp;
-                //ofd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-                //ofd.FilterIndex = 2;
+                ofd.Filter = "Todos os arquivos (*.*)|*.*|Todos os Arquivos do Excel (*.xlsx;*.xls)|*.xlsx;*.xls";
+                ofd.FilterIndex = 2;
                 ofd.RestoreDirectory = true;
                 ofd.Multiselect = true;
                 ofd.Title = Text;
+                ofd.InitialDirectory = AppConfigurationManager.Load().RecentDirectorySaveFiles;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    if (!_addedFile)
-                    {
-                        _addedFile = true;
-                        lbxSelectedFiles.Items.Clear();
-                    }
-
-                    ofd.FileNames.ToList().ForEach(f => lbxSelectedFiles.Items.Add(f));
+                    ofd.FileNames.ToList().ForEach(f => _listFiles.Add(f));
                 }
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (lbxSelectedFiles.SelectedItems.Count > 0)
-            {
-                for (int i = lbxSelectedFiles.SelectedItems.Count - 1; i >= 0; i--)
-                {
-                    lbxSelectedFiles.Items.RemoveAt(lbxSelectedFiles.SelectedIndices[i]);
-                }
+        private void btnDelete_Click(object sender, EventArgs e) => lbxFiles.SelectedItems.Cast<string>().ToList().ForEach(f => _listFiles.Remove(f));
 
-                if (lbxSelectedFiles.Items.Count <= 0)
-                {
-                    _addedFile = false;
-                    lbxSelectedFiles.Items.Add(_msgFileList);
-                }
-            }
-        }
+        private void btnDeleteAll_Click(object sender, EventArgs e) => _listFiles.Clear();
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            if (_addedFile)
-            {
-                var appConfigManager = new AppConfigurationManager().Load();
+            (sender as Button).Enabled = !(sender as Button).Enabled;
 
-                string newFile = new Merge().Execute(
-                    lbxSelectedFiles.Items.Cast<string>().ToArray(),
-                    string.IsNullOrEmpty(appConfigManager.DefaultDirectorySaveFiles) ? _directoryApp : appConfigManager.DefaultDirectorySaveFiles);
+            var appConfig = AppConfigurationManager.Load();
 
-                ExecuteAction(newFile, appConfigManager.SelectedEndProcessAction);
-            }
-            else
-            {
-                MessageBox.Show("Nenhum arquivo arquivo foi adicionado");
-            }
+            string newFile = new Merge().Execute(
+                _listFiles.ToArray(),
+                string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles);
+
+            ExecuteAction(newFile, appConfig.SelectedEndProcessAction);
+
+            appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
+
+            AppConfigurationManager.Save(appConfig);
+            (sender as Button).Enabled = !(sender as Button).Enabled;
         }
 
         private void ExecuteAction(string path, SelectedEndProcessActionEnum processAction)
@@ -119,14 +121,11 @@ namespace ExcelMerge
                     }
                     break;
                 default:
-                    MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nRevise sua configrurações.");
+                    MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nRevise as configrurações.");
                     break;
             }
         }
 
-        private void configuraçõesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FormUtils.Open(new FormConfiguration());
-        }
+        private void configuraçõesToolStripMenuItem_Click(object sender, EventArgs e) => FormUtils.Open(new FormConfiguration());
     }
 }

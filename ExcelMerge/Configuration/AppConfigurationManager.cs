@@ -5,33 +5,31 @@ using System.Windows.Forms;
 
 namespace ExcelMerge.Configuration
 {
-    public class AppConfigurationManager
+    public static class AppConfigurationManager
     {
         private const string ConfigExtension = ".config.json";
 
-        private string _pathAppConfig;
+        private static string GetDirectoryNameFromExecutable() => Path.GetDirectoryName(Application.ExecutablePath);
 
-        private string GetDirectoryNameFromExecutable() => Path.GetDirectoryName(Application.ExecutablePath);
+        private static string GetNameConfig() => Path.GetFileNameWithoutExtension(Application.ExecutablePath);
 
-        private string GetNameConfig() => Path.GetFileNameWithoutExtension(Application.ExecutablePath);
+        private static string GetPathAppConfig() => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
 
-        private string GetPathAppConfig() => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
+        private static void CreateDefaultConfig()
+        {
+            string pathAppConfig = GetPathAppConfig();
 
-        public AppConfigurationManager() => _pathAppConfig = GetPathAppConfig();
+            if (!File.Exists(pathAppConfig))
+                JSONUtils.SaveToFile(new AppConfigModel(), pathAppConfig);
+        }
 
-        public AppConfigModel Load()
+        public static AppConfigModel Load()
         {
             CreateDefaultConfig();
 
-            return JSONUtils.LoadFromFile<AppConfigModel>(_pathAppConfig);
+            return JSONUtils.LoadFromFile<AppConfigModel>(GetPathAppConfig());
         }
 
-        private void CreateDefaultConfig()
-        {
-            if (!File.Exists(_pathAppConfig))
-                JSONUtils.SaveToFile(new AppConfigModel(), _pathAppConfig);
-        }
-
-        public void Save(AppConfigModel appConfig) => JSONUtils.SaveToFile(appConfig, _pathAppConfig);
+        public static void Save(AppConfigModel appConfig) => JSONUtils.SaveToFile(appConfig, GetPathAppConfig());
     }
 }

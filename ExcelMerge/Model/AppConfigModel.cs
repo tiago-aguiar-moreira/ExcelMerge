@@ -6,11 +6,13 @@ namespace ExcelMerge.Model
     {
         public SelectedEndProcessActionEnum SelectedEndProcessAction { get; set; }
         public string DefaultDirectorySaveFiles { get; set; }
+        public string RecentDirectorySaveFiles { get; set; }
 
         public AppConfigModel()
         {
             SelectedEndProcessAction = SelectedEndProcessActionEnum.None;
             DefaultDirectorySaveFiles = string.Empty;
+            RecentDirectorySaveFiles = string.Empty;
         }
     }
 }

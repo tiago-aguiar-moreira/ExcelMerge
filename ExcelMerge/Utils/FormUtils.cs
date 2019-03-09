@@ -8,7 +8,6 @@ namespace ExcelMerge.Utils
         {
             form.Icon = Properties.Resources.Excel;
             form.StartPosition = FormStartPosition.CenterScreen;
-            form.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         public static void Open(this Form form)

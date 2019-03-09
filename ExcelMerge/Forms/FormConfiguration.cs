@@ -5,6 +5,7 @@ using ExcelMerge.Utils;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ExcelMerge
@@ -12,8 +13,6 @@ namespace ExcelMerge
     public partial class FormConfiguration : Form
     {
         private AppConfigModel _appConfig;
-        private AppConfigurationManager _appConfigManager;
-        private CommonOpenFileDialog _fileDialog;
 
         public FormConfiguration()
         {
@@ -22,47 +21,38 @@ namespace ExcelMerge
 
         private void FormConfiguration_Load(object sender, EventArgs e)
         {
-            _appConfigManager = new AppConfigurationManager();
-            _appConfig = _appConfigManager.Load();
+            _appConfig = AppConfigurationManager.Load();
 
             LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);
 
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
-            _fileDialog = new CommonOpenFileDialog
-            {
-                IsFolderPicker = true,
-                InitialDirectory = _appConfig.DefaultDirectorySaveFiles
-            };
         }
 
         private void LoadEndProcessoAction(SelectedEndProcessActionEnum selectedEndProcessAction)
         {
             var descriptions = EnumUtils.GetDescription<SelectedEndProcessActionEnum>();
 
-            foreach (var item in descriptions)
-            {
-                cbxAction.Items.Add(item);
-            }
+            descriptions.ToList().ForEach(f => cbxAction.Items.Add(f));
 
             cbxAction.SelectedIndex = (int)selectedEndProcessAction;
         }
 
-        private void FormConfiguration_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            _appConfigManager.Save(_appConfig);
-        }
+        private void FormConfiguration_FormClosing(object sender, FormClosingEventArgs e) => AppConfigurationManager.Save(_appConfig);
 
-        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) => 
             _appConfig.SelectedEndProcessAction = (SelectedEndProcessActionEnum)(sender as ComboBox).SelectedIndex;
-        }
 
         private void btnBrowserFolder_Click(object sender, EventArgs e)
         {
-            if (_fileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            using (CommonOpenFileDialog fileDialog = new CommonOpenFileDialog())
             {
-                _appConfig.DefaultDirectorySaveFiles = _fileDialog.FileName;
-                txtDefaultDirectorySaveFiles.Text = _fileDialog.FileName;
+                fileDialog.IsFolderPicker = true;
+                fileDialog.InitialDirectory = _appConfig.DefaultDirectorySaveFiles;
+
+                if (fileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    txtDefaultDirectorySaveFiles.Text = fileDialog.FileName;
+                }
             }
         }
 
@@ -85,5 +75,7 @@ namespace ExcelMerge
                 textBox.Clear();
             }
         }
+
+        private void txtDefaultDirectorySaveFiles_TextChanged(object sender, EventArgs e) => _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
     }
 }
