@@ -12,6 +12,7 @@ namespace ExcelMerge
 
         public MergeProgessRows(int lengthRows)
         {
+            Progress = 0;
             Total = lengthRows;
         }
     }
@@ -23,6 +24,7 @@ namespace ExcelMerge
 
         public MergeProgessSheets(int lengthRows)
         {
+            Progress = 0;
             Rows = new MergeProgessRows(lengthRows);
         }
     }
@@ -30,21 +32,22 @@ namespace ExcelMerge
     public class MergeProgessFiles
     {
         public int Progress { get; set; }
-        public MergeProgessSheets[] Sheets { get; set; }
+        public MergeProgessSheets[] Sheet { get; set; }
 
         public MergeProgessFiles(int lengthSheets)
         {
-            Sheets = new MergeProgessSheets[lengthSheets];
+            Progress = 0;
+            Sheet = new MergeProgessSheets[lengthSheets];
         }
     }
     
     public class MergeProgess
     {
-        public MergeProgessFiles[] Files { get; set; }
+        public MergeProgessFiles[] File { get; set; }
 
         public MergeProgess(int lengthFiles)
         {
-            Files = new MergeProgessFiles[lengthFiles];
+            File = new MergeProgessFiles[lengthFiles];
         }
     }
 
@@ -73,20 +76,20 @@ namespace ExcelMerge
         {
             Progress = new MergeProgess(filePath.Length);
 
-            for (int indexFilePath = 0; indexFilePath < Progress.Files.Length; indexFilePath++) // Loop in files
+            for (int indexFilePath = 0; indexFilePath < Progress.File.Length; indexFilePath++) // Loop in files
             {
                 var sheets = new XLWorkbook(filePath[indexFilePath]).Worksheets; // Get sheets from file
 
-                Progress.Files[indexFilePath] = new MergeProgessFiles(sheets.Count)
+                Progress.File[indexFilePath] = new MergeProgessFiles(sheets.Count)
                 {
-                    Sheets = new MergeProgessSheets[sheets.Count]
+                    Sheet = new MergeProgessSheets[sheets.Count]
                 };
 
-                for (int indexSheet = 0; indexSheet < Progress.Files[indexFilePath].Sheets.Length; indexSheet++) // Loop in sheets
+                for (int indexSheet = 0; indexSheet < Progress.File[indexFilePath].Sheet.Length; indexSheet++) // Loop in sheets
                 {
                     var lengthRow = sheets.Worksheet(indexSheet + 1).RowsUsed().Count();                    
 
-                    Progress.Files[indexFilePath].Sheets[indexSheet] = new MergeProgessSheets(lengthRow);
+                    Progress.File[indexFilePath].Sheet[indexSheet] = new MergeProgessSheets(lengthRow);
                 }
             }
         }
@@ -97,20 +100,22 @@ namespace ExcelMerge
 
             int _rowReturnFileCount = 1;
 
-            for (int indexFile = 0; indexFile < Progress.Files.Length; indexFile++) // Loop in files
+            for (int indexFile = 0; indexFile < Progress.File.Length; indexFile++) // Loop in files
             {
                 var sheets = new XLWorkbook(filePath[indexFile]).Worksheets; // Get sheets from file
 
-                //Progress.Files.Progress = indexFile + 1;
+                Progress.File[indexFile].Progress = indexFile + 1;
 
-                for (int indexSheet = 0; indexSheet < Progress.Files[indexFile].Sheets.Length; indexSheet++) // Loop in sheets
+                for (int indexSheet = 0; indexSheet < Progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
                 {
-                    //Progress.Files.Sheets.Progress = indexSheet;
+                    Progress.File[indexFile].Sheet[indexSheet].Progress = indexSheet + 1;
 
                     var sheet = sheets.Worksheet(indexSheet + 1);
 
-                    for (int indexRow = 0; indexRow < Progress.Files[indexFile].Sheets[indexSheet].Rows.Total; indexRow++) // Loop in rows
+                    for (int indexRow = 0; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
                     {
+                        Progress.File[indexFile].Sheet[indexSheet].Rows.Progress = indexRow + 1;
+
                         var row = sheet.Row(indexRow + 1);
 
                         int _columnReturnFileCount = 1;
