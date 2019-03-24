@@ -71,19 +71,33 @@ namespace ExcelMerge
         private void btnRun_Click(object sender, EventArgs e)
         {
             (sender as Button).Enabled = !(sender as Button).Enabled;
+            try
+            {               
+                var appConfig = AppConfigurationManager.Load();
 
-            var appConfig = AppConfigurationManager.Load();
+                string newFile = new Merge().Execute(
+                    _listFiles.ToArray(),
+                    string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles);
 
-            string newFile = new Merge().Execute(
-                _listFiles.ToArray(),
-                string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles);
+                ExecuteAction(newFile, appConfig.SelectedEndProcessAction);
 
-            ExecuteAction(newFile, appConfig.SelectedEndProcessAction);
+                appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
 
-            appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
-
-            AppConfigurationManager.Save(appConfig);
-            (sender as Button).Enabled = !(sender as Button).Enabled;
+                AppConfigurationManager.Save(appConfig);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    ex.Message,
+                    "Erro inesperado durante o processamento",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                (sender as Button).Enabled = !(sender as Button).Enabled;
+            }
         }
 
         private void ExecuteAction(string path, SelectedEndProcessActionEnum processAction)
