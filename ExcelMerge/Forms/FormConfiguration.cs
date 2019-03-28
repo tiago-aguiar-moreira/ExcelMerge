@@ -21,6 +21,8 @@ namespace ExcelMerge
 
         private void FormConfiguration_Load(object sender, EventArgs e)
         {
+            this.SetBaseConfigs();
+
             _appConfig = AppConfigurationManager.Load();
 
             LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);

@@ -1,5 +1,6 @@
 ﻿using ExcelMerge.Configuration;
 using ExcelMerge.Enumerator;
+using ExcelMerge.Forms;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
@@ -25,7 +26,7 @@ namespace ExcelMerge
         public MainForm()
         {
             InitializeComponent();
-            this.SetBasicConfigs();
+            this.SetBaseConfigs();
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
 
@@ -70,16 +71,21 @@ namespace ExcelMerge
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            (sender as Button).Enabled = !(sender as Button).Enabled;
             try
-            {               
+            {
+                (sender as Button).Enabled = !(sender as Button).Enabled;
                 var appConfig = AppConfigurationManager.Load();
 
-                string newFile = new Merge().Execute(
+                var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
                     string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles);
 
-                ExecuteAction(newFile, appConfig.SelectedEndProcessAction);
+                frmProgress.ShowDialog();
+
+                if (!string.IsNullOrEmpty(frmProgress.NewFile))
+                {
+                    ExecuteAction(frmProgress.NewFile, appConfig.SelectedEndProcessAction);
+                }
 
                 appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
 
@@ -115,8 +121,8 @@ namespace ExcelMerge
                 case SelectedEndProcessActionEnum.AskIfShouldOpenFile:
                     if (MessageBox.Show(
                         this,
-                        "Ação ao fim do processamento",
                         "Deseja abrir o arquivo gerado?",
+                        "Ação ao fim do processamento",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {
@@ -126,8 +132,8 @@ namespace ExcelMerge
                 case SelectedEndProcessActionEnum.AskIfShouldOpenDir:
                     if (MessageBox.Show(
                         this,
-                        "Ação ao fim do processamento",
                         "Deseja abrir o diretório onde o arquivo foi gerado?",
+                        "Ação ao fim do processamento",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {

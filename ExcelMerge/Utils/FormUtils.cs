@@ -4,7 +4,7 @@ namespace ExcelMerge.Utils
 {
     public static class FormUtils
     {
-        public static void SetBasicConfigs(this Form form)
+        public static void SetBaseConfigs(this Form form)
         {
             form.Icon = Properties.Resources.Excel;
             form.StartPosition = FormStartPosition.CenterScreen;
@@ -12,7 +12,6 @@ namespace ExcelMerge.Utils
 
         public static void Open(this Form form)
         {
-            form.SetBasicConfigs();            
             form.ShowDialog();
         }
     }
