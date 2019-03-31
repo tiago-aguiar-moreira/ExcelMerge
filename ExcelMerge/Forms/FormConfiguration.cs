@@ -26,6 +26,7 @@ namespace ExcelMerge
             _appConfig = AppConfigurationManager.Load();
 
             LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);
+            LoadHeaderAction(_appConfig.SelectedHeaderAction);
 
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
         }
@@ -39,7 +40,17 @@ namespace ExcelMerge
             cbxAction.SelectedIndex = (int)selectedEndProcessAction;
         }
 
-        private void FormConfiguration_FormClosing(object sender, FormClosingEventArgs e) => AppConfigurationManager.Save(_appConfig);
+        private void LoadHeaderAction(SelectedHeaderActionEnum selectedHeaderAction)
+        {
+            var descriptions = EnumUtils.GetDescription<SelectedHeaderActionEnum>();
+
+            descriptions.ToList().ForEach(f => cbxHeader.Items.Add(f));
+
+            cbxHeader.SelectedIndex = (int)selectedHeaderAction;
+        }
+
+        private void FormConfiguration_FormClosing(object sender, FormClosingEventArgs e) => 
+            AppConfigurationManager.Save(_appConfig);
 
         private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) => 
             _appConfig.SelectedEndProcessAction = (SelectedEndProcessActionEnum)(sender as ComboBox).SelectedIndex;
@@ -78,6 +89,10 @@ namespace ExcelMerge
             }
         }
 
-        private void txtDefaultDirectorySaveFiles_TextChanged(object sender, EventArgs e) => _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
+        private void txtDefaultDirectorySaveFiles_TextChanged(object sender, EventArgs e) => 
+            _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
+
+        private void cbxHeader_SelectedIndexChanged(object sender, EventArgs e) =>
+            _appConfig.SelectedHeaderAction = (SelectedHeaderActionEnum)(sender as ComboBox).SelectedIndex;
     }
 }

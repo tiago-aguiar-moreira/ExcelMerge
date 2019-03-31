@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enumerator\SelectedEndProcessActionEnum.cs" />
+    <Compile Include="Enumerator\SelectedHeaderActionEnum.cs" />
     <Compile Include="Forms\FormProgress.cs">
       <SubType>Form</SubType>
     </Compile>

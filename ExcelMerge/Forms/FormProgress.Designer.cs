@@ -46,7 +46,7 @@
             this.progBarFile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progBarFile.Name = "progBarFile";
             this.progBarFile.Size = new System.Drawing.Size(495, 35);
-            this.progBarFile.TabIndex = 0;
+            this.progBarFile.TabIndex = 1;
             // 
             // progBarSheet
             // 
@@ -56,7 +56,7 @@
             this.progBarSheet.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progBarSheet.Name = "progBarSheet";
             this.progBarSheet.Size = new System.Drawing.Size(495, 35);
-            this.progBarSheet.TabIndex = 1;
+            this.progBarSheet.TabIndex = 3;
             // 
             // progBarRow
             // 
@@ -66,7 +66,7 @@
             this.progBarRow.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progBarRow.Name = "progBarRow";
             this.progBarRow.Size = new System.Drawing.Size(495, 35);
-            this.progBarRow.TabIndex = 2;
+            this.progBarRow.TabIndex = 5;
             // 
             // lblFile
             // 
@@ -75,7 +75,7 @@
             this.lblFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFile.Name = "lblFile";
             this.lblFile.Size = new System.Drawing.Size(70, 20);
-            this.lblFile.TabIndex = 3;
+            this.lblFile.TabIndex = 0;
             this.lblFile.Text = "Arquivos";
             // 
             // lblSheet
@@ -85,7 +85,7 @@
             this.lblSheet.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSheet.Name = "lblSheet";
             this.lblSheet.Size = new System.Drawing.Size(72, 20);
-            this.lblSheet.TabIndex = 4;
+            this.lblSheet.TabIndex = 2;
             this.lblSheet.Text = "Planilhas";
             // 
             // lblRow
@@ -95,7 +95,7 @@
             this.lblRow.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblRow.Name = "lblRow";
             this.lblRow.Size = new System.Drawing.Size(56, 20);
-            this.lblRow.TabIndex = 5;
+            this.lblRow.TabIndex = 4;
             this.lblRow.Text = "Linhas";
             // 
             // btnCancelar
@@ -132,6 +132,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FormProgress";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormProgress";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormProgress_FormClosing);
             this.ResumeLayout(false);
