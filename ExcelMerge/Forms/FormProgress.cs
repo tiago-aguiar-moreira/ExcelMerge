@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using ExcelMerge.Enumerator;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
@@ -16,29 +17,33 @@ namespace ExcelMerge.Forms
         private MergeProgess Progress;
         private string[] _filePath;
         private string _destinyDirectory;
+        private SelectedHeaderActionEnum _selectedHeaderAction;
+        private DoWorkEventArgs _eventDoWork;
+        private int _rowReturnFileCount;
+        private int _columnReturnFileCount;
 
-        public string NewFile { get; set; }
+        public string NewFile { get; private set; }
 
-        public FormProgress(string[] filePath, string destinyDirectory)
+        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum)
         {
             InitializeComponent();
             this.SetBaseConfigs();
 
             _filePath = filePath;
             _destinyDirectory = destinyDirectory;
-
+            _selectedHeaderAction = selectedHeaderActionEnum;
             _mainWorkbook = new XLWorkbook();
-            _mainWorksheet = _mainWorkbook.Worksheets.Add("First");
+            _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
 
             progBarFile.Value = 0;
             progBarSheet.Value = 0;
             progBarRow.Value = 0;
 
-            //executa o processo de forma assincrona.
-            backWorker.RunWorkerAsync();
+            backWorker.RunWorkerAsync(); //executes the process asynchronously.
         }
 
-        private string NewFileName(string destinyDirectory) => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
+        private string NewFileName(string destinyDirectory) =>
+            $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
 
         private string SaveFile(string destinyDirectory)
         {
@@ -73,29 +78,27 @@ namespace ExcelMerge.Forms
         {
             var cancel = backWorker.CancellationPending;
 
-            //Verifica se houve uma requisição para cancelar a operação.
-            if (cancel)
+            if (cancel) //Checks if there was a request to cancel the operation.
             {
-                //se sim, define a propriedade Cancel para true para que o evento WorkerCompleted saiba que a tarefa foi cancelada.
+                // if yes, sets the Cancel property to true so that the WorkerCompleted event knows that the task has been canceled.
                 e.Cancel = true;
 
-                //zera o percentual de progresso do backgroundWorker1.
-                backWorker.ReportProgress(0);
+                backWorker.ReportProgress(0); // zero the progress percentage of backgroundWorker1.
             }
 
             return cancel;
         }
 
-        public string Execute(DoWorkEventArgs e)
+        public string Execute()
         {
             SetTotals(_filePath);
 
-            int _rowReturnFileCount = 1;
+            _rowReturnFileCount = 1;
 
             SetMaximumProgressBar(progBarFile, Progress.File.Length);
             for (int indexFile = 0; indexFile < Progress.File.Length; indexFile++) // Loop in files
             {
-                if (CancellationPending(e))
+                if (CancellationPending(_eventDoWork))
                     return string.Empty;
 
                 backWorker.ReportProgress(indexFile);
@@ -113,7 +116,7 @@ namespace ExcelMerge.Forms
                 SetMaximumProgressBar(progBarSheet, Progress.File[indexFile].Sheet.Length);
                 for (int indexSheet = 0; indexSheet < Progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
                 {
-                    if (CancellationPending(e))
+                    if (CancellationPending(_eventDoWork))
                         return string.Empty;
 
                     Progress.File[indexFile].Sheet[indexSheet].Progress = indexSheet + 1;
@@ -129,7 +132,7 @@ namespace ExcelMerge.Forms
                     SetMaximumProgressBar(progBarRow, Progress.File[indexFile].Sheet[indexSheet].Rows.Total);
                     for (int indexRow = 0; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
                     {
-                        if (CancellationPending(e))
+                        if (CancellationPending(_eventDoWork))
                             return string.Empty;
 
                         Progress.File[indexFile].Sheet[indexSheet].Rows.Progress = indexRow + 1;
@@ -142,68 +145,92 @@ namespace ExcelMerge.Forms
 
                         var row = sheet.Row(indexRow + 1);
 
-                        int _columnReturnFileCount = 1;
+                        _columnReturnFileCount = 1;
 
-                        for (int indexCell = 0; indexCell <= row.RowUsed().CellCount(); indexCell++) // Loop in cells
+                        switch (_selectedHeaderAction)
                         {
-                            _mainWorksheet.Cell(_rowReturnFileCount, _columnReturnFileCount).Value = row.Cell(indexCell + 1).Value.ToString();
+                            case SelectedHeaderActionEnum.ConsiderFirstFile:
+                                if (indexFile == 0 && indexSheet == 0 && indexRow == 0)
+                                {
+                                    if (!AddNewRow(row.RowUsed().CellCount(), row))
+                                        return string.Empty;
 
-                            _columnReturnFileCount += 1;
+                                    _rowReturnFileCount += 1;
+                                }
+                                else if (indexRow != 0)
+                                {
+                                    if (!AddNewRow(row.RowUsed().CellCount(), row))
+                                        return string.Empty;
+
+                                    _rowReturnFileCount += 1;
+                                }
+                                break;
+                            case SelectedHeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
+                                if (indexRow == 0)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    if (!AddNewRow(row.RowUsed().CellCount(), row))
+                                        return string.Empty;
+
+                                    _rowReturnFileCount += 1;
+                                    break;
+                                }
+                            case SelectedHeaderActionEnum.None:
+                                if (!AddNewRow(row.RowUsed().CellCount(), row))
+                                    return string.Empty;
+
+                                _rowReturnFileCount += 1;
+                                break;
                         }
-
-                        _rowReturnFileCount += 1;
                     }
                 }
             }
 
-            //Finalmente, caso tudo esteja ok, finaliza o progresso em 100%.
             backWorker.ReportProgress(100);
 
             return SaveFile(_destinyDirectory);
+        }
+
+        private bool AddNewRow(int cellCount, IXLRow row)
+        {
+            for (int indexCell = 0; indexCell < cellCount; indexCell++) // Loop in cells
+            {
+                if (CancellationPending(_eventDoWork))
+                    return false;
+
+                _mainWorksheet.Cell(_rowReturnFileCount, _columnReturnFileCount).Value = row.Cell(indexCell + 1).Value.ToString();
+
+                _columnReturnFileCount += 1;
+            }
+
+            return true;
         }
 
         private void SetMaximumProgressBar(ProgressBar prog, int maximum) => prog.BeginInvoke(new Action(() => { prog.Maximum = maximum; }));
 
         private void RefreshLabelAndProgressBar(Label label, ProgressBar prog, int progress, string textLabel)
         {
-            //var progress = index + 1;
-            //label.Text = $"{progress.ToString()} de {prog.Maximum}";
+            label.BeginInvoke(new Action(() => { label.Text = textLabel; }));
 
-            label.BeginInvoke(new Action(() =>
-            {
-                label.Text = textLabel;
-            }));
+            prog.BeginInvoke(new Action(() => { prog.Value = progress; }));
 
-            prog.BeginInvoke(new Action(() =>
-            {
-                prog.Value = progress;
-            }));
             Thread.Sleep(1);
         }
 
         /// <summary>
-        /// //Aqui chamamos os nossos metodos com as tarefas demoradas.
+        /// Here we call our methods with the time-consuming tasks.
         /// </summary>
         private void backWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            NewFile = Execute(e);
+            _eventDoWork = e;
+            NewFile = Execute();
         }
 
         /// <summary>
-        /// Aqui implementamos o que desejamos fazer enquanto o progresso da tarefa é modificado,[incrementado].
-        /// </summary>
-        private void backWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //Incrementa o valor da progressbar com o valor atual do progresso da tarefa.
-            //progBarFile.Value = e.ProgressPercentage;
-
-            //informa o percentual na forma de texto.
-            //lblFile.Text = e.ProgressPercentage.ToString() + "%";
-        }
-
-        /// <summary>
-        /// Após a tarefa ser concluida, esse metodo e chamado para
-        /// implementar o que deve ser feito imediatamente após a conclusão da tarefa.
+        /// After the task is completed, this method is called to implement what should be done immediately upon completion of the task.
         /// </summary>
         private void backWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -230,7 +257,7 @@ namespace ExcelMerge.Forms
                 MessageBox.Show(
                     this,
                     "Processamento concluído com sucesso!",
-                    "Processamento", 
+                    "Processamento",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
@@ -251,9 +278,7 @@ namespace ExcelMerge.Forms
             btnCancelar.Enabled = false;
         }
 
-        private void FormProgress_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FormProgress_FormClosing(object sender, FormClosingEventArgs e) =>
             btnCancelar_Click(sender, e);
-        }
     }
 }

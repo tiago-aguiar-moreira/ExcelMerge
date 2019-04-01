@@ -113,7 +113,6 @@
             this.backWorker.WorkerReportsProgress = true;
             this.backWorker.WorkerSupportsCancellation = true;
             this.backWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backWorker_DoWork);
-            this.backWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backWorker_ProgressChanged);
             this.backWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backWorker_RunWorkerCompleted);
             // 
             // FormProgress

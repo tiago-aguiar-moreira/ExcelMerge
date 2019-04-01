@@ -78,7 +78,8 @@ namespace ExcelMerge
 
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
-                    string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles);
+                    string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles,
+                    appConfig.SelectedHeaderAction);
 
                 frmProgress.ShowDialog();
 
@@ -146,6 +147,7 @@ namespace ExcelMerge
             }
         }
 
-        private void configuraçõesToolStripMenuItem_Click(object sender, EventArgs e) => FormUtils.Open(new FormConfiguration());
+        private void configuraçõesToolStripMenuItem_Click(object sender, EventArgs e) => 
+            FormUtils.Open(new FormConfiguration());
     }
 }
