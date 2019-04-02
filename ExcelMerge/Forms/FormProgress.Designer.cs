@@ -132,7 +132,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FormProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FormProgress";
+            this.Text = "Excel Merge";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormProgress_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

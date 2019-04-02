@@ -1,6 +1,7 @@
 ﻿using ExcelMerge.Configuration;
 using ExcelMerge.Enumerator;
 using ExcelMerge.Forms;
+using ExcelMerge.Model;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ namespace ExcelMerge
 {
     public partial class MainForm : Form
     {
+        private AppConfigModel _appConfig;
         private string _directoryApp;
         private BindingList<string> _listFiles;
         private ListChangedType[] listEvents = new ListChangedType[]
@@ -29,7 +31,7 @@ namespace ExcelMerge
             this.SetBaseConfigs();
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
-
+            _appConfig = AppConfigurationManager.Load();
             _listFiles = new BindingList<string>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
 
@@ -56,13 +58,15 @@ namespace ExcelMerge
                 ofd.RestoreDirectory = true;
                 ofd.Multiselect = true;
                 ofd.Title = Text;
-                ofd.InitialDirectory = AppConfigurationManager.Load().RecentDirectorySaveFiles;
+                ofd.InitialDirectory = _appConfig.RecentDirectorySaveFiles;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     ofd.FileNames.ToList().ForEach(f => _listFiles.Add(f));
                 }
             }
+
+            _appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
         }
 
         private void btnDelete_Click(object sender, EventArgs e) => lbxFiles.SelectedItems.Cast<string>().ToList().ForEach(f => _listFiles.Remove(f));
@@ -74,23 +78,20 @@ namespace ExcelMerge
             try
             {
                 (sender as Button).Enabled = !(sender as Button).Enabled;
-                var appConfig = AppConfigurationManager.Load();
-
+                
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
-                    string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) ? _directoryApp : appConfig.DefaultDirectorySaveFiles,
-                    appConfig.SelectedHeaderAction);
+                    string.IsNullOrEmpty(_appConfig.DefaultDirectorySaveFiles) ? _directoryApp : _appConfig.DefaultDirectorySaveFiles,
+                    _appConfig.SelectedHeaderAction);
 
                 frmProgress.ShowDialog();
 
                 if (!string.IsNullOrEmpty(frmProgress.NewFile))
                 {
-                    ExecuteAction(frmProgress.NewFile, appConfig.SelectedEndProcessAction);
+                    ExecuteAction(frmProgress.NewFile, _appConfig.SelectedEndProcessAction);
                 }
 
-                appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
-
-                AppConfigurationManager.Save(appConfig);
+                AppConfigurationManager.Save(_appConfig);
             }
             catch (Exception ex)
             {
