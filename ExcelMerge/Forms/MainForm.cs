@@ -62,7 +62,13 @@ namespace ExcelMerge
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    ofd.FileNames.ToList().ForEach(f => _listFiles.Add(f));
+                    foreach (var item in ofd.FileNames)
+                    {
+                        if (_listFiles.IndexOf(item) < 0)
+                        {
+                            _listFiles.Add(item);
+                        }
+                    }
                 }
             }
 
