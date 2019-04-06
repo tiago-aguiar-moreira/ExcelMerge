@@ -7,7 +7,7 @@ namespace ExcelMerge.Configuration
 {
     public static class AppConfigurationManager
     {
-        private const string ConfigExtension = ".config.json";
+        private const string ConfigExtension = ".exe.config.json";
 
         private static string GetDirectoryNameFromExecutable() => Path.GetDirectoryName(Application.ExecutablePath);
 

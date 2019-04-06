@@ -91,6 +91,7 @@ namespace ExcelMerge
                     MessageBoxIcon.Exclamation);
 
                 textBox.Clear();
+                textBox.Focus();
             }
         }
 
@@ -99,5 +100,8 @@ namespace ExcelMerge
 
         private void cbxHeader_SelectedIndexChanged(object sender, EventArgs e) =>
             _appConfig.SelectedHeaderAction = (SelectedHeaderActionEnum)(sender as ComboBox).SelectedIndex;
+
+        private void headerLength_ValueChanged(object sender, EventArgs e) =>
+             _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());
     }
 }

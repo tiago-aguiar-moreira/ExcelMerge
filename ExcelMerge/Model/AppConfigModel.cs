@@ -8,6 +8,7 @@ namespace ExcelMerge.Model
         public SelectedHeaderActionEnum SelectedHeaderAction { get; set; }
         public string DefaultDirectorySaveFiles { get; set; }
         public string RecentDirectorySaveFiles { get; set; }
+        public byte HeaderLength { get; set; }
 
         public AppConfigModel()
         {
@@ -15,6 +16,7 @@ namespace ExcelMerge.Model
             SelectedHeaderAction = SelectedHeaderActionEnum.None;
             DefaultDirectorySaveFiles = string.Empty;
             RecentDirectorySaveFiles = string.Empty;
+            HeaderLength = 1;
         }
     }
 }
