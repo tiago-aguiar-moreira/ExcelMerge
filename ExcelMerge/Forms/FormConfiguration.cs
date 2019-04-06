@@ -72,6 +72,11 @@ namespace ExcelMerge
         private void txtDefaultDirectorySaveFiles_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var textBox = sender as TextBox;
+            if (string.IsNullOrEmpty(textBox.Text.Trim()))
+            {
+                return;
+            }
+
             if (Directory.Exists(textBox.Text.Trim()))
             {
                 _appConfig.DefaultDirectorySaveFiles = textBox.Text.Trim();
