@@ -25,7 +25,7 @@ namespace ExcelMerge.Forms
 
         public string NewFile { get; private set; }
 
-        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum/*, byte headerLength*/)
+        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -33,7 +33,7 @@ namespace ExcelMerge.Forms
             _filePath = filePath;
             _destinyDirectory = destinyDirectory;
             _selectedHeaderAction = selectedHeaderActionEnum;
-            //_headerLength = headerLength;
+            _headerLength = headerLength;
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
 
@@ -51,6 +51,7 @@ namespace ExcelMerge.Forms
         {
             var newFileName = NewFileName(destinyDirectory);
             _mainWorkbook.SaveAs(newFileName);
+            backWorker.ReportProgress(100);
             return newFileName;
         }
 
@@ -205,8 +206,6 @@ namespace ExcelMerge.Forms
                     }
                 }
             }
-
-            backWorker.ReportProgress(100);
 
             return SaveFile(_destinyDirectory);
         }
