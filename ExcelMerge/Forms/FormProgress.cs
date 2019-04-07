@@ -21,10 +21,11 @@ namespace ExcelMerge.Forms
         private DoWorkEventArgs _eventDoWork;
         private int _rowReturnFileCount;
         private int _columnReturnFileCount;
+        private int _headerLength;
 
         public string NewFile { get; private set; }
 
-        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum)
+        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum/*, byte headerLength*/)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -32,6 +33,7 @@ namespace ExcelMerge.Forms
             _filePath = filePath;
             _destinyDirectory = destinyDirectory;
             _selectedHeaderAction = selectedHeaderActionEnum;
+            //_headerLength = headerLength;
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
 
@@ -89,6 +91,39 @@ namespace ExcelMerge.Forms
             return cancel;
         }
 
+        private void UpdateProgress(MergeProgessFiles files, int progress, string name)
+        {
+            files.Progress = progress + 1;
+
+            RefreshLabelAndProgressBar(
+                lblFile,
+                progBarFile,
+                files.Progress,
+                $"Arquivo {files.Progress} de {progBarFile.Maximum} ({name})");
+        }
+
+        private void UpdateProgress(MergeProgessSheets sheets, int progress, string name)
+        {
+            sheets.Progress = progress + 1;
+
+            RefreshLabelAndProgressBar(
+                lblSheet,
+                progBarSheet,
+                sheets.Progress,
+                $"Planilha {sheets.Progress} de {progBarSheet.Maximum} ({name})");
+        }
+
+        private void UpdateProgress(MergeProgessRows rows, int progress)
+        {
+            rows.Progress = progress + 1;
+
+            RefreshLabelAndProgressBar(
+                lblRow,
+                progBarRow,
+                rows.Progress,
+                $"Linha {rows.Progress} de {progBarRow.Maximum}");
+        }
+
         public string Execute()
         {
             SetTotals(_filePath);
@@ -103,46 +138,27 @@ namespace ExcelMerge.Forms
 
                 backWorker.ReportProgress(indexFile);
 
-                Progress.File[indexFile].Progress = indexFile + 1;
-
-                RefreshLabelAndProgressBar(
-                    lblFile,
-                    progBarFile,
-                    Progress.File[indexFile].Progress,
-                    $"Arquivo {Progress.File[indexFile].Progress} de {progBarFile.Maximum} ({Path.GetFileName(_filePath[indexFile])})");
-
-                SetMaximumProgressBar(progBarSheet, Progress.File[indexFile].Sheet.Length);
+                UpdateProgress(Progress.File[indexFile], indexFile, _filePath[indexFile]);
 
                 var sheets = new XLWorkbook(_filePath[indexFile]).Worksheets; // Get sheets from file
 
+                SetMaximumProgressBar(progBarSheet, Progress.File[indexFile].Sheet.Length);
                 for (int indexSheet = 0; indexSheet < Progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
                 {
                     if (CancellationPending(_eventDoWork))
                         return string.Empty;
 
-                    Progress.File[indexFile].Sheet[indexSheet].Progress = indexSheet + 1;
-
                     var sheet = sheets.Worksheet(indexSheet + 1);
 
-                    RefreshLabelAndProgressBar(
-                        lblSheet,
-                        progBarSheet,
-                        Progress.File[indexFile].Sheet[indexSheet].Progress,
-                        $"Planilha {Progress.File[indexFile].Sheet[indexSheet].Progress} de {progBarSheet.Maximum} ({sheet.Name})");
+                    UpdateProgress(Progress.File[indexFile].Sheet[indexSheet], indexSheet, sheet.Name);
 
                     SetMaximumProgressBar(progBarRow, Progress.File[indexFile].Sheet[indexSheet].Rows.Total);
-                    for (int indexRow = 0; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
+                    for (int indexRow = 0 + _headerLength; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
                     {
                         if (CancellationPending(_eventDoWork))
                             return string.Empty;
 
-                        Progress.File[indexFile].Sheet[indexSheet].Rows.Progress = indexRow + 1;
-
-                        RefreshLabelAndProgressBar(
-                            lblRow,
-                            progBarRow,
-                            Progress.File[indexFile].Sheet[indexSheet].Rows.Progress,
-                            $"Linha {Progress.File[indexFile].Sheet[indexSheet].Rows.Progress} de {progBarRow.Maximum}");
+                        UpdateProgress(Progress.File[indexFile].Sheet[indexSheet].Rows, indexRow);
 
                         var row = sheet.Row(indexRow + 1);
 
