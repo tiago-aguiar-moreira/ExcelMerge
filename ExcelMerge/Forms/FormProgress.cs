@@ -36,12 +36,13 @@ namespace ExcelMerge.Forms
             _headerLength = headerLength;
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
+            _rowReturnFileCount = 1;
 
             progBarFile.Value = 0;
             progBarSheet.Value = 0;
             progBarRow.Value = 0;
 
-            backWorker.RunWorkerAsync(); //executes the process asynchronously.
+            backWorker.RunWorkerAsync(); //executes the process asynchronously
         }
 
         private string NewFileName(string destinyDirectory) =>
@@ -129,8 +130,6 @@ namespace ExcelMerge.Forms
         {
             SetTotals(_filePath);
 
-            _rowReturnFileCount = 1;
-
             SetMaximumProgressBar(progBarFile, Progress.File.Length);
             for (int indexFile = 0; indexFile < Progress.File.Length; indexFile++) // Loop in files
             {
@@ -154,7 +153,8 @@ namespace ExcelMerge.Forms
                     UpdateProgress(Progress.File[indexFile].Sheet[indexSheet], indexSheet, sheet.Name);
 
                     SetMaximumProgressBar(progBarRow, Progress.File[indexFile].Sheet[indexSheet].Rows.Total);
-                    for (int indexRow = 0 + _headerLength; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
+                    var initialIndex = _headerLength - 1;
+                    for (int indexRow = initialIndex; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
                     {
                         if (CancellationPending(_eventDoWork))
                             return string.Empty;
@@ -168,14 +168,14 @@ namespace ExcelMerge.Forms
                         switch (_selectedHeaderAction)
                         {
                             case SelectedHeaderActionEnum.ConsiderFirstFile:
-                                if (indexFile == 0 && indexSheet == 0 && indexRow == 0)
+                                if (indexFile == 0 && indexSheet == 0 && indexRow == initialIndex)
                                 {
                                     if (!AddNewRow(row.RowUsed().CellCount(), row))
                                         return string.Empty;
 
                                     _rowReturnFileCount += 1;
                                 }
-                                else if (indexRow != 0)
+                                else if (indexRow != initialIndex)
                                 {
                                     if (!AddNewRow(row.RowUsed().CellCount(), row))
                                         return string.Empty;
@@ -184,7 +184,7 @@ namespace ExcelMerge.Forms
                                 }
                                 break;
                             case SelectedHeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
-                                if (indexRow == 0)
+                                if (indexRow == initialIndex)
                                 {
                                     continue;
                                 }

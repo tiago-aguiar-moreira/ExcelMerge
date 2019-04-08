@@ -172,6 +172,7 @@
             this.cbxHeader.Name = "cbxHeader";
             this.cbxHeader.Size = new System.Drawing.Size(261, 28);
             this.cbxHeader.TabIndex = 1;
+            this.cbxHeader.SelectedIndexChanged += new System.EventHandler(this.cbxHeader_SelectedIndexChanged);
             // 
             // FormConfiguration
             // 
