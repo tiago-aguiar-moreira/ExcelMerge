@@ -29,6 +29,7 @@ namespace ExcelMerge
             LoadHeaderAction(_appConfig.SelectedHeaderAction);
 
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
+            headerLength.Value = _appConfig.HeaderLength;
         }
 
         private void LoadEndProcessoAction(SelectedEndProcessActionEnum selectedEndProcessAction)
