@@ -12,16 +12,17 @@ namespace ExcelMerge.Forms
 {
     public partial class FormProgress : Form
     {
-        private IXLWorkbook _mainWorkbook;
-        private IXLWorksheet _mainWorksheet;
-        private MergeProgess Progress;
-        private string[] _filePath;
-        private string _destinyDirectory;
-        private SelectedHeaderActionEnum _selectedHeaderAction;
-        private DoWorkEventArgs _eventDoWork;
         private int _rowReturnFileCount;
         private int _columnReturnFileCount;
         private int _headerLength;
+        private int _numberHeaderColumns;
+        private string _destinyDirectory;
+        private string[] _filePath;
+        private SelectedHeaderActionEnum _selectedHeaderAction;
+        private DoWorkEventArgs _eventDoWork;
+        private IXLWorkbook _mainWorkbook;
+        private IXLWorksheet _mainWorksheet;
+        private MergeProgess Progress;
 
         public string NewFile { get; private set; }
 
@@ -37,7 +38,7 @@ namespace ExcelMerge.Forms
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
             _rowReturnFileCount = 1;
-
+            _numberHeaderColumns = 0;
             progBarFile.Value = 0;
             progBarSheet.Value = 0;
             progBarRow.Value = 0;
@@ -162,6 +163,21 @@ namespace ExcelMerge.Forms
                         UpdateProgress(Progress.File[indexFile].Sheet[indexSheet].Rows, indexRow);
 
                         var row = sheet.Row(indexRow + 1);
+
+                        #region Validate number of header columns
+                        /* If the number of columns in the worksheet to be imported is greater than the 
+                        number of columns in the first worksheet, the worksheet is discarded. */
+
+                        if (_numberHeaderColumns == 0)
+                        {
+                            _numberHeaderColumns = row.RowUsed().CellCount();
+                        }
+
+                        if (_numberHeaderColumns != row.RowUsed().CellCount())
+                        {
+                            break;
+                        }
+                        #endregion
 
                         _columnReturnFileCount = 1;
 
