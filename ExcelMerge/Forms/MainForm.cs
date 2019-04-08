@@ -15,9 +15,7 @@ namespace ExcelMerge
 {
     public partial class MainForm : Form
     {
-        private AppConfigModel _appConfig;
         private string _directoryApp;
-        private string _recentDirectorySaveFiles;
         private BindingList<string> _listFiles;
         private ListChangedType[] listEvents = new ListChangedType[]
         {
@@ -32,7 +30,6 @@ namespace ExcelMerge
             this.SetBaseConfigs();
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
-            _recentDirectorySaveFiles = AppConfigurationManager.Load().RecentDirectorySaveFiles;
             _listFiles = new BindingList<string>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
 
@@ -53,13 +50,15 @@ namespace ExcelMerge
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
+                var appConfig = AppConfigurationManager.Load();
+
                 ofd.InitialDirectory = _directoryApp;
                 ofd.Filter = "Todos os arquivos (*.*)|*.*|Todos os Arquivos do Excel (*.xlsx;*.xls)|*.xlsx;*.xls";
                 ofd.FilterIndex = 2;
                 ofd.RestoreDirectory = true;
                 ofd.Multiselect = true;
                 ofd.Title = Text;
-                ofd.InitialDirectory = _recentDirectorySaveFiles;
+                ofd.InitialDirectory = appConfig.RecentDirectorySaveFiles;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
@@ -71,9 +70,10 @@ namespace ExcelMerge
                         }
                     }
                 }
-            }
 
-            _recentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
+                appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
+                AppConfigurationManager.Save(appConfig);
+            }
         }
 
         private void btnDelete_Click(object sender, EventArgs e) => lbxFiles.SelectedItems.Cast<string>().ToList().ForEach(f => _listFiles.Remove(f));
@@ -85,28 +85,26 @@ namespace ExcelMerge
             try
             {
                 (sender as Button).Enabled = !(sender as Button).Enabled;
-                _appConfig = AppConfigurationManager.Load();
+                var appConfig = AppConfigurationManager.Load();
 
-                var directoryDestiny = string.IsNullOrEmpty(_appConfig.DefaultDirectorySaveFiles) 
+                var directoryDestiny = string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) 
                     ? _directoryApp 
-                    : _appConfig.DefaultDirectorySaveFiles;
+                    : appConfig.DefaultDirectorySaveFiles;
 
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
                     directoryDestiny,
-                    _appConfig.SelectedHeaderAction,
-                    _appConfig.HeaderLength);
+                    appConfig.SelectedHeaderAction,
+                    appConfig.HeaderLength);
 
                 frmProgress.ShowDialog();
 
                 if (!string.IsNullOrEmpty(frmProgress.NewFile))
                 {
-                    ExecuteAction(frmProgress.NewFile, _appConfig.SelectedEndProcessAction);
+                    ExecuteAction(frmProgress.NewFile, appConfig.SelectedEndProcessAction);
                 }
 
-                _appConfig.RecentDirectorySaveFiles = _recentDirectorySaveFiles;
-
-                AppConfigurationManager.Save(_appConfig);
+                AppConfigurationManager.Save(appConfig);
             }
             catch (Exception ex)
             {
