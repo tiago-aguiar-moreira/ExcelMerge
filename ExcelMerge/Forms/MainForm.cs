@@ -1,7 +1,6 @@
 ﻿using ExcelMerge.Configuration;
 using ExcelMerge.Enumerator;
 using ExcelMerge.Forms;
-using ExcelMerge.Model;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
@@ -28,6 +27,7 @@ namespace ExcelMerge
         {
             InitializeComponent();
             this.SetBaseConfigs();
+            tbControl.SelectedTab = tbPgImport;
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
             _listFiles = new BindingList<string>();
@@ -85,6 +85,7 @@ namespace ExcelMerge
             try
             {
                 (sender as Button).Enabled = !(sender as Button).Enabled;
+                richTxt.Clear();
                 var appConfig = AppConfigurationManager.Load();
 
                 var directoryDestiny = string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) 
@@ -95,7 +96,8 @@ namespace ExcelMerge
                     _listFiles.ToArray(),
                     directoryDestiny,
                     appConfig.SelectedHeaderAction,
-                    appConfig.HeaderLength);
+                    appConfig.HeaderLength,
+                    richTxt);
 
                 frmProgress.ShowDialog();
 

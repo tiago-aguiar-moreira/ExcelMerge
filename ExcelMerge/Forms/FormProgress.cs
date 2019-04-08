@@ -3,6 +3,7 @@ using ExcelMerge.Enumerator;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -22,11 +23,12 @@ namespace ExcelMerge.Forms
         private DoWorkEventArgs _eventDoWork;
         private IXLWorkbook _mainWorkbook;
         private IXLWorksheet _mainWorksheet;
-        private MergeProgess Progress;
+        private MergeProgess _progress;
+        private RichTextBox _log;
 
         public string NewFile { get; private set; }
 
-        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength)
+        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength, RichTextBox richTextBox)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -39,6 +41,8 @@ namespace ExcelMerge.Forms
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
             _rowReturnFileCount = 1;
             _numberHeaderColumns = 0;
+            _log = richTextBox;
+
             progBarFile.Value = 0;
             progBarSheet.Value = 0;
             progBarRow.Value = 0;
@@ -59,22 +63,22 @@ namespace ExcelMerge.Forms
 
         private void SetTotals(string[] filePath)
         {
-            Progress = new MergeProgess(filePath.Length);
+            _progress = new MergeProgess(filePath.Length);
 
-            for (int indexFilePath = 0; indexFilePath < Progress.File.Length; indexFilePath++) // Loop in files
+            for (int indexFilePath = 0; indexFilePath < _progress.File.Length; indexFilePath++) // Loop in files
             {
                 var sheets = new XLWorkbook(filePath[indexFilePath]).Worksheets; // Get sheets from file
 
-                Progress.File[indexFilePath] = new MergeProgessFiles(sheets.Count)
+                _progress.File[indexFilePath] = new MergeProgessFiles(sheets.Count)
                 {
                     Sheet = new MergeProgessSheets[sheets.Count]
                 };
 
-                for (int indexSheet = 0; indexSheet < Progress.File[indexFilePath].Sheet.Length; indexSheet++) // Loop in sheets
+                for (int indexSheet = 0; indexSheet < _progress.File[indexFilePath].Sheet.Length; indexSheet++) // Loop in sheets
                 {
                     var lengthRow = sheets.Worksheet(indexSheet + 1).RowsUsed().Count();
 
-                    Progress.File[indexFilePath].Sheet[indexSheet] = new MergeProgessSheets(lengthRow);
+                    _progress.File[indexFilePath].Sheet[indexSheet] = new MergeProgessSheets(lengthRow);
                 }
             }
         }
@@ -131,36 +135,54 @@ namespace ExcelMerge.Forms
         {
             SetTotals(_filePath);
 
-            SetMaximumProgressBar(progBarFile, Progress.File.Length);
-            for (int indexFile = 0; indexFile < Progress.File.Length; indexFile++) // Loop in files
+            SetMaximumProgressBar(progBarFile, _progress.File.Length);
+            for (int indexFile = 0; indexFile < _progress.File.Length; indexFile++) // Loop in files
             {
                 if (CancellationPending(_eventDoWork))
                     return string.Empty;
 
                 backWorker.ReportProgress(indexFile);
 
-                UpdateProgress(Progress.File[indexFile], indexFile, _filePath[indexFile]);
+                UpdateProgress(_progress.File[indexFile], indexFile, Path.GetFileName(_filePath[indexFile]));
 
                 var sheets = new XLWorkbook(_filePath[indexFile]).Worksheets; // Get sheets from file
 
-                SetMaximumProgressBar(progBarSheet, Progress.File[indexFile].Sheet.Length);
-                for (int indexSheet = 0; indexSheet < Progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
+                SetMaximumProgressBar(progBarSheet, _progress.File[indexFile].Sheet.Length);
+                for (int indexSheet = 0; indexSheet < _progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
                 {
                     if (CancellationPending(_eventDoWork))
                         return string.Empty;
 
                     var sheet = sheets.Worksheet(indexSheet + 1);
 
-                    UpdateProgress(Progress.File[indexFile].Sheet[indexSheet], indexSheet, sheet.Name);
+                    UpdateProgress(_progress.File[indexFile].Sheet[indexSheet], indexSheet, sheet.Name);
 
-                    SetMaximumProgressBar(progBarRow, Progress.File[indexFile].Sheet[indexSheet].Rows.Total);
+                    SetMaximumProgressBar(progBarRow, _progress.File[indexFile].Sheet[indexSheet].Rows.Total);
+
+                    if (_headerLength > _progress.File[indexFile].Sheet[indexSheet].Rows.Total)
+                    {
+                        var filePath = _filePath[indexFile];
+
+                        _log.BeginInvoke(new Action(() =>
+                        {
+                            var text = $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss.fff", CultureInfo.InvariantCulture)}{Environment.NewLine}";
+                            text += $"Arquivo: {filePath}{Environment.NewLine}";
+                            text += $"Planilha: {sheet.Name}{Environment.NewLine}";
+                            text += $"O tamanho do cabeçalho da planilha é inferior ao informado nas configurações.{Environment.NewLine}";
+                            text += $"{new String('-', 150)}{Environment.NewLine}";
+
+                            _log.AppendText(text);
+                        }));
+                        continue;
+                    }
+
                     var initialIndex = _headerLength - 1;
-                    for (int indexRow = initialIndex; indexRow < Progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
+                    for (int indexRow = initialIndex; indexRow < _progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
                     {
                         if (CancellationPending(_eventDoWork))
                             return string.Empty;
 
-                        UpdateProgress(Progress.File[indexFile].Sheet[indexSheet].Rows, indexRow);
+                        UpdateProgress(_progress.File[indexFile].Sheet[indexSheet].Rows, indexRow);
 
                         var row = sheet.Row(indexRow + 1);
 

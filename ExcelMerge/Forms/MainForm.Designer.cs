@@ -28,45 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tbControl = new System.Windows.Forms.TabControl();
+            this.tbPgImport = new System.Windows.Forms.TabPage();
             this.lbxFiles = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnDeleteAll = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
+            this.tabPgLog = new System.Windows.Forms.TabPage();
+            this.richTxt = new System.Windows.Forms.RichTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.configuraçõesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tbControl.SuspendLayout();
+            this.tbPgImport.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tabPgLog.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabControl1
+            // tbControl
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 24);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(654, 407);
-            this.tabControl1.TabIndex = 1;
+            this.tbControl.Controls.Add(this.tbPgImport);
+            this.tbControl.Controls.Add(this.tabPgLog);
+            this.tbControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbControl.Location = new System.Drawing.Point(0, 24);
+            this.tbControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbControl.Name = "tbControl";
+            this.tbControl.SelectedIndex = 0;
+            this.tbControl.Size = new System.Drawing.Size(654, 407);
+            this.tbControl.TabIndex = 1;
             // 
-            // tabPage1
+            // tbPgImport
             // 
-            this.tabPage1.Controls.Add(this.lbxFiles);
-            this.tabPage1.Controls.Add(this.panel1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 29);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabPage1.Size = new System.Drawing.Size(646, 374);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Importação";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tbPgImport.Controls.Add(this.lbxFiles);
+            this.tbPgImport.Controls.Add(this.panel1);
+            this.tbPgImport.Location = new System.Drawing.Point(4, 29);
+            this.tbPgImport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbPgImport.Name = "tbPgImport";
+            this.tbPgImport.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbPgImport.Size = new System.Drawing.Size(646, 374);
+            this.tbPgImport.TabIndex = 0;
+            this.tbPgImport.Text = "Importação";
+            this.tbPgImport.UseVisualStyleBackColor = true;
             // 
             // lbxFiles
             // 
@@ -144,6 +148,27 @@
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
+            // tabPgLog
+            // 
+            this.tabPgLog.Controls.Add(this.richTxt);
+            this.tabPgLog.Location = new System.Drawing.Point(4, 29);
+            this.tabPgLog.Name = "tabPgLog";
+            this.tabPgLog.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPgLog.Size = new System.Drawing.Size(646, 374);
+            this.tabPgLog.TabIndex = 1;
+            this.tabPgLog.Text = "Erros";
+            this.tabPgLog.UseVisualStyleBackColor = true;
+            // 
+            // richTxt
+            // 
+            this.richTxt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTxt.Location = new System.Drawing.Point(3, 3);
+            this.richTxt.Name = "richTxt";
+            this.richTxt.ReadOnly = true;
+            this.richTxt.Size = new System.Drawing.Size(640, 368);
+            this.richTxt.TabIndex = 0;
+            this.richTxt.Text = "";
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -166,16 +191,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(654, 431);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tbControl);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MinimumSize = new System.Drawing.Size(670, 470);
             this.Name = "MainForm";
             this.Text = "Excel Merge";
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tbControl.ResumeLayout(false);
+            this.tbPgImport.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.tabPgLog.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -185,8 +211,8 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabControl tbControl;
+        private System.Windows.Forms.TabPage tbPgImport;
         private System.Windows.Forms.ListBox lbxFiles;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnAdd;
@@ -195,6 +221,8 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem configuraçõesToolStripMenuItem;
         private System.Windows.Forms.Button btnDeleteAll;
+        private System.Windows.Forms.TabPage tabPgLog;
+        private System.Windows.Forms.RichTextBox richTxt;
     }
 }
 
