@@ -16,29 +16,29 @@ namespace ExcelMerge
     {
         private string _directoryApp;
         private BindingList<string> _listFiles;
-        private ListChangedType[] listEvents = new ListChangedType[]
-        {
-            ListChangedType.ItemAdded,
-            ListChangedType.ItemDeleted,
-            ListChangedType.Reset
-        };
+        private ListChangedType[] _listEvents;
 
         public MainForm()
         {
             InitializeComponent();
             this.SetBaseConfigs();
-            tbControl.SelectedTab = tbPgImport;
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
             _listFiles = new BindingList<string>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
 
             lbxFiles.DataSource = _listFiles;
+            _listEvents = new ListChangedType[]
+            {
+                ListChangedType.ItemAdded,
+                ListChangedType.ItemDeleted,
+                ListChangedType.Reset
+            };
         }
 
         private void list_ListChanged(object sender, ListChangedEventArgs e)
         {
-            if (listEvents.Contains(e.ListChangedType))
+            if (_listEvents.Contains(e.ListChangedType))
             {
                 btnDeleteAll.Enabled = _listFiles.Any();
                 btnDelete.Enabled = _listFiles.Any();
@@ -85,7 +85,7 @@ namespace ExcelMerge
             try
             {
                 (sender as Button).Enabled = !(sender as Button).Enabled;
-                richTxt.Clear();
+                
                 var appConfig = AppConfigurationManager.Load();
 
                 var directoryDestiny = string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles) 
@@ -96,8 +96,7 @@ namespace ExcelMerge
                     _listFiles.ToArray(),
                     directoryDestiny,
                     appConfig.SelectedHeaderAction,
-                    appConfig.HeaderLength,
-                    richTxt);
+                    appConfig.HeaderLength);
 
                 frmProgress.ShowDialog();
 

@@ -3,6 +3,7 @@ using ExcelMerge.Enumerator;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -24,11 +25,11 @@ namespace ExcelMerge.Forms
         private IXLWorkbook _mainWorkbook;
         private IXLWorksheet _mainWorksheet;
         private MergeProgess _progress;
-        private RichTextBox _log;
+        private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
 
         public string NewFile { get; private set; }
 
-        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength, RichTextBox richTextBox)
+        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -41,8 +42,8 @@ namespace ExcelMerge.Forms
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
             _rowReturnFileCount = 1;
             _numberHeaderColumns = 0;
-            _log = richTextBox;
 
+            richTxt.Clear();
             progBarFile.Value = 0;
             progBarSheet.Value = 0;
             progBarRow.Value = 0;
@@ -131,11 +132,61 @@ namespace ExcelMerge.Forms
                 $"Linha {rows.Progress} de {progBarRow.Maximum}");
         }
 
+        private void UpdateLogReadFile(string filePath)
+        {
+            richTxt.BeginInvoke(new Action(() =>
+            {
+                var text = $"{DateTime.Now.ToString(_formatDateTime, CultureInfo.InvariantCulture)}{Environment.NewLine}";
+                text += $"Arquivo: {filePath}{Environment.NewLine}";
+                text += $"{Environment.NewLine}";
+
+                richTxt.AppendText(text);
+            }));
+        }
+
+        private void UpdateLogReadSheet(string sheetName, bool error)
+        {
+            UpdateLogReadSheet(sheetName, error, 0);
+        }
+
+        private void UpdateLogReadSheet(string sheetName, bool error, int totalRows)
+        {
+            richTxt.BeginInvoke(new Action(() =>
+            {
+                var text = $"{DateTime.Now.ToString(_formatDateTime, CultureInfo.InvariantCulture)}{Environment.NewLine}";
+                if (totalRows > 0)
+                {
+                    text += $"Planilha: {sheetName} - Total de linhas: {totalRows}{Environment.NewLine}"; 
+                }
+                else
+                {
+                    text += $"Planilha: {sheetName} - Erro: Cabeçalho divergente do parametrizado{Environment.NewLine}";
+                }
+                
+                text += $"{Environment.NewLine}";
+
+                richTxt.SelectionStart = richTxt.TextLength;
+                if (error)
+                {
+                    richTxt.SelectionLength = 0;
+                    richTxt.SelectionColor = Color.Red;
+                    richTxt.AppendText(text);
+                    richTxt.SelectionColor = richTxt.ForeColor;
+                }
+                else
+                {
+                    richTxt.AppendText(text);
+                }
+
+                richTxt.ScrollToCaret();
+            }));
+        }
+
         public string Execute()
         {
             SetTotals(_filePath);
-
             SetMaximumProgressBar(progBarFile, _progress.File.Length);
+
             for (int indexFile = 0; indexFile < _progress.File.Length; indexFile++) // Loop in files
             {
                 if (CancellationPending(_eventDoWork))
@@ -143,7 +194,10 @@ namespace ExcelMerge.Forms
 
                 backWorker.ReportProgress(indexFile);
 
-                UpdateProgress(_progress.File[indexFile], indexFile, Path.GetFileName(_filePath[indexFile]));
+                var fileName = Path.GetFileName(_filePath[indexFile]);
+
+                UpdateLogReadFile(fileName);
+                UpdateProgress(_progress.File[indexFile], indexFile, fileName);
 
                 var sheets = new XLWorkbook(_filePath[indexFile]).Worksheets; // Get sheets from file
 
@@ -155,6 +209,7 @@ namespace ExcelMerge.Forms
 
                     var sheet = sheets.Worksheet(indexSheet + 1);
 
+                    UpdateLogReadSheet(sheet.Name, false, _progress.File[indexFile].Sheet[indexSheet].Rows.Total);
                     UpdateProgress(_progress.File[indexFile].Sheet[indexSheet], indexSheet, sheet.Name);
 
                     SetMaximumProgressBar(progBarRow, _progress.File[indexFile].Sheet[indexSheet].Rows.Total);
@@ -163,16 +218,7 @@ namespace ExcelMerge.Forms
                     {
                         var filePath = _filePath[indexFile];
 
-                        _log.BeginInvoke(new Action(() =>
-                        {
-                            var text = $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss.fff", CultureInfo.InvariantCulture)}{Environment.NewLine}";
-                            text += $"Arquivo: {filePath}{Environment.NewLine}";
-                            text += $"Planilha: {sheet.Name}{Environment.NewLine}";
-                            text += $"O tamanho do cabeçalho da planilha é inferior ao informado nas configurações.{Environment.NewLine}";
-                            text += $"{new String('-', 150)}{Environment.NewLine}";
-
-                            _log.AppendText(text);
-                        }));
+                        UpdateLogReadSheet(sheet.Name, true);
                         continue;
                     }
 
@@ -301,6 +347,7 @@ namespace ExcelMerge.Forms
                     "Processamento",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
+                Close();
             }
             else if (e.Error != null)
             {
@@ -310,6 +357,7 @@ namespace ExcelMerge.Forms
                     "Processamento",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
+                Close();
             }
             else
             {
@@ -321,7 +369,7 @@ namespace ExcelMerge.Forms
                     MessageBoxIcon.Information);
             }
 
-            Close();
+            btnCancelar.Enabled = false;
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
