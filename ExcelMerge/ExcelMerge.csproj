@@ -93,12 +93,6 @@
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Utils\JSONUtils.cs" />
     <Compile Include="Model\AppConfigModel.cs" />
-    <Compile Include="Forms\FormConfiguration.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormConfiguration.Designer.cs">
-      <DependentUpon>FormConfiguration.cs</DependentUpon>
-    </Compile>
     <Compile Include="Configuration\AppConfigurationManager.cs" />
     <Compile Include="MergeProgress.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -109,9 +103,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\FormConfiguration.resx">
-      <DependentUpon>FormConfiguration.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProgress.resx">
       <DependentUpon>FormProgress.cs</DependentUpon>
     </EmbeddedResource>

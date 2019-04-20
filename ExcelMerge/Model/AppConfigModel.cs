@@ -9,6 +9,7 @@ namespace ExcelMerge.Model
         public string DefaultDirectorySaveFiles { get; set; }
         public string RecentDirectorySaveFiles { get; set; }
         public byte HeaderLength { get; set; }
+        public bool ShowConfigs { get; set; }
 
         public AppConfigModel()
         {

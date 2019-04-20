@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ExcelMerge.Configuration
 {
-    public static class AppConfigurationManager
+    public static class AppConfigManager
     {
         private const string ConfigExtension = ".exe.config.json";
 
