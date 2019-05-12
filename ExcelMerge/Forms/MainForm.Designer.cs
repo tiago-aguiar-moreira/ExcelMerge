@@ -36,6 +36,9 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.pnlFiles = new System.Windows.Forms.Panel();
+            this.gridVwFiles = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pnlSettings = new System.Windows.Forms.Panel();
             this.btnConfigs = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -49,9 +52,9 @@
             this.lblDefaultDirectorySaveFiles = new System.Windows.Forms.Label();
             this.lblAction = new System.Windows.Forms.Label();
             this.cbxAction = new System.Windows.Forms.ComboBox();
-            this.lbxFiles = new System.Windows.Forms.ListBox();
             this.panel1.SuspendLayout();
             this.pnlFiles.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).BeginInit();
             this.pnlSettings.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.headerLength)).BeginInit();
@@ -123,13 +126,42 @@
             // 
             // pnlFiles
             // 
-            this.pnlFiles.Controls.Add(this.lbxFiles);
+            this.pnlFiles.Controls.Add(this.gridVwFiles);
             this.pnlFiles.Controls.Add(this.panel1);
             this.pnlFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlFiles.Location = new System.Drawing.Point(0, 227);
             this.pnlFiles.Name = "pnlFiles";
             this.pnlFiles.Size = new System.Drawing.Size(660, 352);
             this.pnlFiles.TabIndex = 4;
+            // 
+            // gridVwFiles
+            // 
+            this.gridVwFiles.AllowUserToAddRows = false;
+            this.gridVwFiles.AllowUserToDeleteRows = false;
+            this.gridVwFiles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridVwFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2});
+            this.gridVwFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridVwFiles.Location = new System.Drawing.Point(0, 56);
+            this.gridVwFiles.Name = "gridVwFiles";
+            this.gridVwFiles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridVwFiles.Size = new System.Drawing.Size(660, 296);
+            this.gridVwFiles.TabIndex = 2;
+            // 
+            // Column1
+            // 
+            this.Column1.DataPropertyName = "Path";
+            this.Column1.HeaderText = "Arquivo";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Width = 450;
+            // 
+            // Column2
+            // 
+            this.Column2.DataPropertyName = "Separator";
+            this.Column2.HeaderText = "Separador";
+            this.Column2.Name = "Column2";
             // 
             // pnlSettings
             // 
@@ -291,17 +323,6 @@
             this.cbxAction.SelectedIndexChanged += new System.EventHandler(this.cbxAction_SelectedIndexChanged);
             this.cbxAction.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
-            // lbxFiles
-            // 
-            this.lbxFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbxFiles.FormattingEnabled = true;
-            this.lbxFiles.HorizontalScrollbar = true;
-            this.lbxFiles.ItemHeight = 20;
-            this.lbxFiles.Location = new System.Drawing.Point(0, 56);
-            this.lbxFiles.Name = "lbxFiles";
-            this.lbxFiles.Size = new System.Drawing.Size(660, 296);
-            this.lbxFiles.TabIndex = 1;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -316,6 +337,7 @@
             this.Text = "Excel Merge";
             this.panel1.ResumeLayout(false);
             this.pnlFiles.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).EndInit();
             this.pnlSettings.ResumeLayout(false);
             this.pnlSettings.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -345,7 +367,9 @@
         private System.Windows.Forms.Label lblAction;
         private System.Windows.Forms.ComboBox cbxAction;
         private System.Windows.Forms.Button btnConfigs;
-        private System.Windows.Forms.ListBox lbxFiles;
+        private System.Windows.Forms.DataGridView gridVwFiles;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
     }
 }
 

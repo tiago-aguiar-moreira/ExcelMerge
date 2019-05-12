@@ -17,7 +17,7 @@ namespace ExcelMerge
     public partial class MainForm : Form
     {
         private string _directoryApp;
-        private BindingList<string> _listFiles;
+        private BindingList<FileMerge> _listFiles;
         private ListChangedType[] _listEvents;
         private AppConfigModel _appConfig;
         private int _pnlSettingsHeight;
@@ -29,7 +29,7 @@ namespace ExcelMerge
 
             _pnlSettingsHeight = pnlSettings.Height;
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
-            _listFiles = new BindingList<string>();
+            _listFiles = new BindingList<FileMerge>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
             _appConfig = AppConfigManager.Load();
             _listEvents = new ListChangedType[]
@@ -39,7 +39,7 @@ namespace ExcelMerge
                 ListChangedType.Reset
             };
 
-            lbxFiles.DataSource = _listFiles;
+            gridVwFiles.DataSource = _listFiles;
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
             headerLength.Value = _appConfig.HeaderLength;
             LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);
@@ -89,21 +89,33 @@ namespace ExcelMerge
                 {
                     foreach (var item in ofd.FileNames)
                     {
-                        if (_listFiles.IndexOf(item) < 0)
+                        if (!_listFiles.Any(a => a.Path.ToLower() == item))
                         {
-                            _listFiles.Add(item);
+                            _listFiles.Add(new FileMerge(item));
                         }
                     }
 
-                    _appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault());
+                    _appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault().Path);
                     AppConfigManager.Save(_appConfig);
                 }
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e) => lbxFiles.SelectedItems.Cast<string>().ToList().ForEach(f => _listFiles.Remove(f));
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            var selectedRowCount = gridVwFiles.Rows.GetRowCount(DataGridViewElementStates.Selected);
 
-        private void btnDeleteAll_Click(object sender, EventArgs e) => _listFiles.Clear();
+            if (selectedRowCount > 0)
+            {
+                for (int i = 0; i < selectedRowCount; i++)
+                {
+                    _listFiles.RemoveAt(gridVwFiles.SelectedRows[i].Index);
+                }
+            }
+        }
+
+        private void btnDeleteAll_Click(object sender, EventArgs e)
+            => _listFiles.Clear();
 
         private void btnRun_Click(object sender, EventArgs e)
         {

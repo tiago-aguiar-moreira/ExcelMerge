@@ -17,9 +17,9 @@ namespace ExcelMerge.Forms
         private int _rowReturnFileCount;
         private int _columnReturnFileCount;
         private int _headerLength;
-        private int _numberHeaderColumns;
+        //private int _numberHeaderColumns;
         private string _destinyDirectory;
-        private string[] _filePath;
+        private FileMerge[] _fileMerge;
         private SelectedHeaderActionEnum _selectedHeaderAction;
         private DoWorkEventArgs _eventDoWork;
         private IXLWorkbook _mainWorkbook;
@@ -29,19 +29,19 @@ namespace ExcelMerge.Forms
 
         public string NewFile { get; private set; }
 
-        public FormProgress(string[] filePath, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength)
+        public FormProgress(FileMerge[] fileMerge, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength)
         {
             InitializeComponent();
             this.SetBaseConfigs();
 
-            _filePath = filePath;
+            _fileMerge = fileMerge;
             _destinyDirectory = destinyDirectory;
             _selectedHeaderAction = selectedHeaderActionEnum;
             _headerLength = headerLength;
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
             _rowReturnFileCount = 1;
-            _numberHeaderColumns = 0;
+            //_numberHeaderColumns = 0;
 
             richTxt.Clear();
             progBarFile.Value = 0;
@@ -62,13 +62,13 @@ namespace ExcelMerge.Forms
             return newFileName;
         }
 
-        private void SetTotals(string[] filePath)
+        private void SetTotals(FileMerge[] filePath)
         {
             _progress = new MergeProgess(filePath.Length);
 
             for (int indexFilePath = 0; indexFilePath < _progress.File.Length; indexFilePath++) // Loop in files
             {
-                var sheets = new XLWorkbook(filePath[indexFilePath]).Worksheets; // Get sheets from file
+                var sheets = new XLWorkbook(filePath[indexFilePath].Path).Worksheets; // Get sheets from file
 
                 _progress.File[indexFilePath] = new MergeProgessFiles(sheets.Count)
                 {
@@ -182,9 +182,27 @@ namespace ExcelMerge.Forms
             }));
         }
 
+        private IXLRow GetRow(IXLRow row, string separator)
+        {
+            var valueRow = row.Cell(1).Value.ToString();
+
+            if (!string.IsNullOrEmpty(separator))
+            {
+                var values = valueRow.Split(separator.ToArray());
+
+                row.Clear();
+                for (int cellNumber = 0; cellNumber < values.Length; cellNumber++)
+                {
+                    row.Cell(cellNumber + 1).Value = values[cellNumber];
+                }
+            }
+
+            return row;
+        }
+
         public string Execute()
         {
-            SetTotals(_filePath);
+            SetTotals(_fileMerge);
             SetMaximumProgressBar(progBarFile, _progress.File.Length);
 
             for (int indexFile = 0; indexFile < _progress.File.Length; indexFile++) // Loop in files
@@ -194,12 +212,13 @@ namespace ExcelMerge.Forms
 
                 backWorker.ReportProgress(indexFile);
 
-                var fileName = Path.GetFileName(_filePath[indexFile]);
+                var fileName = Path.GetFileName(_fileMerge[indexFile].Path);
+                //_fileCSV = Path.GetExtension(_filePath[indexFile]) == ".csv";
 
                 UpdateLogReadFile(fileName);
                 UpdateProgress(_progress.File[indexFile], indexFile, fileName);
 
-                var sheets = new XLWorkbook(_filePath[indexFile]).Worksheets; // Get sheets from file
+                var sheets = new XLWorkbook(_fileMerge[indexFile].Path).Worksheets; // Get sheets from file
 
                 SetMaximumProgressBar(progBarSheet, _progress.File[indexFile].Sheet.Length);
                 for (int indexSheet = 0; indexSheet < _progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
@@ -216,8 +235,6 @@ namespace ExcelMerge.Forms
 
                     if (_headerLength > _progress.File[indexFile].Sheet[indexSheet].Rows.Total)
                     {
-                        var filePath = _filePath[indexFile];
-
                         UpdateLogReadSheet(sheet.Name, true);
                         continue;
                     }
@@ -230,22 +247,21 @@ namespace ExcelMerge.Forms
 
                         UpdateProgress(_progress.File[indexFile].Sheet[indexSheet].Rows, indexRow);
 
-                        var row = sheet.Row(indexRow + 1);
+                        var row = GetRow(sheet.Row(indexRow + 1), _fileMerge[indexFile].Separator);
 
-                        #region Validate number of header columns
+                        //#region Validate number of header columns
                         /* If the number of columns in the worksheet to be imported is greater than the 
                         number of columns in the first worksheet, the worksheet is discarded. */
+                        //if (_numberHeaderColumns == 0)
+                        //{
+                        //    _numberHeaderColumns = row.RowUsed().CellCount();
+                        //}
 
-                        if (_numberHeaderColumns == 0)
-                        {
-                            _numberHeaderColumns = row.RowUsed().CellCount();
-                        }
-
-                        if (_numberHeaderColumns != row.RowUsed().CellCount())
-                        {
-                            break;
-                        }
-                        #endregion
+                        //if (_numberHeaderColumns != row.RowUsed().CellCount())
+                        //{
+                        //    break;
+                        //}
+                        //#endregion
 
                         _columnReturnFileCount = 1;
 
@@ -387,5 +403,18 @@ namespace ExcelMerge.Forms
 
         private void FormProgress_FormClosing(object sender, FormClosingEventArgs e) =>
             btnCancelar_Click(sender, e);
+    }
+
+    public class FileMerge
+    {
+        public string Path { get; set; }
+        public string Separator { get; set; }
+
+        public FileMerge(string name)
+        {
+            Path = name;
+            Separator = string.Empty;
+        }
+
     }
 }
