@@ -34,10 +34,8 @@
             this.richTxt = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnCancelar = new System.Windows.Forms.Button();
-            this.lblRow = new System.Windows.Forms.Label();
             this.lblSheet = new System.Windows.Forms.Label();
             this.lblFile = new System.Windows.Forms.Label();
-            this.progBarRow = new System.Windows.Forms.ProgressBar();
             this.progBarSheet = new System.Windows.Forms.ProgressBar();
             this.progBarFile = new System.Windows.Forms.ProgressBar();
             this.panel3.SuspendLayout();
@@ -85,10 +83,8 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panel1.Controls.Add(this.btnCancelar);
-            this.panel1.Controls.Add(this.lblRow);
             this.panel1.Controls.Add(this.lblSheet);
             this.panel1.Controls.Add(this.lblFile);
-            this.panel1.Controls.Add(this.progBarRow);
             this.panel1.Controls.Add(this.progBarSheet);
             this.panel1.Controls.Add(this.progBarFile);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
@@ -99,27 +95,18 @@
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(375, 207);
+            this.btnCancelar.Location = new System.Drawing.Point(4, 142);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(137, 45);
+            this.btnCancelar.Size = new System.Drawing.Size(194, 45);
             this.btnCancelar.TabIndex = 17;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
-            // lblRow
-            // 
-            this.lblRow.AutoSize = true;
-            this.lblRow.Location = new System.Drawing.Point(4, 139);
-            this.lblRow.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblRow.Name = "lblRow";
-            this.lblRow.Size = new System.Drawing.Size(56, 20);
-            this.lblRow.TabIndex = 10;
-            this.lblRow.Text = "Linhas";
-            // 
             // lblSheet
             // 
             this.lblSheet.AutoSize = true;
+            this.lblSheet.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSheet.Location = new System.Drawing.Point(4, 74);
             this.lblSheet.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSheet.Name = "lblSheet";
@@ -130,22 +117,13 @@
             // lblFile
             // 
             this.lblFile.AutoSize = true;
+            this.lblFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFile.Location = new System.Drawing.Point(4, 9);
             this.lblFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFile.Name = "lblFile";
             this.lblFile.Size = new System.Drawing.Size(70, 20);
             this.lblFile.TabIndex = 6;
             this.lblFile.Text = "Arquivos";
-            // 
-            // progBarRow
-            // 
-            this.progBarRow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progBarRow.Location = new System.Drawing.Point(4, 164);
-            this.progBarRow.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.progBarRow.Name = "progBarRow";
-            this.progBarRow.Size = new System.Drawing.Size(508, 35);
-            this.progBarRow.TabIndex = 11;
             // 
             // progBarSheet
             // 
@@ -195,10 +173,8 @@
         private System.Windows.Forms.RichTextBox richTxt;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnCancelar;
-        private System.Windows.Forms.Label lblRow;
         private System.Windows.Forms.Label lblSheet;
         private System.Windows.Forms.Label lblFile;
-        private System.Windows.Forms.ProgressBar progBarRow;
         private System.Windows.Forms.ProgressBar progBarSheet;
         private System.Windows.Forms.ProgressBar progBarFile;
     }

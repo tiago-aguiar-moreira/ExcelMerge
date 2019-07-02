@@ -20,11 +20,11 @@ namespace ExcelMerge.Forms
         //private int _numberHeaderColumns;
         private string _destinyDirectory;
         private FileMerge[] _fileMerge;
+        private MergeProgessFiles[] _progressFile;
         private SelectedHeaderActionEnum _selectedHeaderAction;
         private DoWorkEventArgs _eventDoWork;
         private IXLWorkbook _mainWorkbook;
         private IXLWorksheet _mainWorksheet;
-        private MergeProgess _progress;
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
 
         public string NewFile { get; private set; }
@@ -41,18 +41,16 @@ namespace ExcelMerge.Forms
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
             _rowReturnFileCount = 1;
-            //_numberHeaderColumns = 0;
 
             richTxt.Clear();
             progBarFile.Value = 0;
             progBarSheet.Value = 0;
-            progBarRow.Value = 0;
 
             backWorker.RunWorkerAsync(); //executes the process asynchronously
         }
 
-        private string NewFileName(string destinyDirectory) =>
-            $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
+        private string NewFileName(string destinyDirectory)
+            => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
 
         private string SaveFile(string destinyDirectory)
         {
@@ -64,23 +62,13 @@ namespace ExcelMerge.Forms
 
         private void SetTotals(FileMerge[] filePath)
         {
-            _progress = new MergeProgess(filePath.Length);
+            _progressFile = new MergeProgessFiles[filePath.Length];
 
-            for (int indexFilePath = 0; indexFilePath < _progress.File.Length; indexFilePath++) // Loop in files
+            for (int index = 0; index < _progressFile.Length; index++) // Loop in files
             {
-                var sheets = new XLWorkbook(filePath[indexFilePath].Path).Worksheets; // Get sheets from file
+                var sheets = new XLWorkbook(filePath[index].Path).Worksheets; // Get sheets from file
 
-                _progress.File[indexFilePath] = new MergeProgessFiles(sheets.Count)
-                {
-                    Sheet = new MergeProgessSheets[sheets.Count]
-                };
-
-                for (int indexSheet = 0; indexSheet < _progress.File[indexFilePath].Sheet.Length; indexSheet++) // Loop in sheets
-                {
-                    var lengthRow = sheets.Worksheet(indexSheet + 1).RowsUsed().Count();
-
-                    _progress.File[indexFilePath].Sheet[indexSheet] = new MergeProgessSheets(lengthRow);
-                }
+                _progressFile[index] = new MergeProgessFiles(sheets.Count);
             }
         }
 
@@ -120,18 +108,7 @@ namespace ExcelMerge.Forms
                 sheets.Progress,
                 $"Planilha {sheets.Progress} de {progBarSheet.Maximum} ({name})");
         }
-
-        private void UpdateProgress(MergeProgessRows rows, int progress)
-        {
-            rows.Progress = progress + 1;
-
-            RefreshLabelAndProgressBar(
-                lblRow,
-                progBarRow,
-                rows.Progress,
-                $"Linha {rows.Progress} de {progBarRow.Maximum}");
-        }
-
+        
         private void UpdateLogReadFile(string filePath)
         {
             richTxt.BeginInvoke(new Action(() =>
@@ -146,23 +123,11 @@ namespace ExcelMerge.Forms
 
         private void UpdateLogReadSheet(string sheetName, bool error)
         {
-            UpdateLogReadSheet(sheetName, error, 0);
-        }
-
-        private void UpdateLogReadSheet(string sheetName, bool error, int totalRows)
-        {
             richTxt.BeginInvoke(new Action(() =>
             {
                 var text = $"{DateTime.Now.ToString(_formatDateTime, CultureInfo.InvariantCulture)}{Environment.NewLine}";
-                if (totalRows > 0)
-                {
-                    text += $"Planilha: {sheetName} - Total de linhas: {totalRows}{Environment.NewLine}"; 
-                }
-                else
-                {
-                    text += $"Planilha: {sheetName} - Erro: Cabeçalho divergente do parametrizado{Environment.NewLine}";
-                }
                 
+                text += $"Planilha: {sheetName}";
                 text += $"{Environment.NewLine}";
 
                 richTxt.SelectionStart = richTxt.TextLength;
@@ -200,12 +165,26 @@ namespace ExcelMerge.Forms
             return row;
         }
 
+        /// <summary>
+        /// Get sheets from file path
+        /// </summary>
+        /// <param name="path">Path</param>
+        /// <returns></returns>
+        private IXLWorksheets GetWorksheets(string path) => new XLWorkbook(path).Worksheets; // 
+
+        private int GetInitialIndex() => _headerLength - 1;
+
+        private void SetIncrementRowFileCount() => _rowReturnFileCount += 1;
         public string Execute()
         {
             SetTotals(_fileMerge);
-            SetMaximumProgressBar(progBarFile, _progress.File.Length);
 
-            for (int indexFile = 0; indexFile < _progress.File.Length; indexFile++) // Loop in files
+            if (_progressFile.Length <= 0)
+                return string.Empty;
+
+            SetMaximumProgressBar(progBarFile, _progressFile.Length);
+
+            for (int indexFile = 0; indexFile < _progressFile.Length; indexFile++) // Loop in files
             {
                 if (CancellationPending(_eventDoWork))
                     return string.Empty;
@@ -216,75 +195,51 @@ namespace ExcelMerge.Forms
                 //_fileCSV = Path.GetExtension(_filePath[indexFile]) == ".csv";
 
                 UpdateLogReadFile(fileName);
-                UpdateProgress(_progress.File[indexFile], indexFile, fileName);
+                UpdateProgress(_progressFile[indexFile], indexFile, fileName);
 
-                var sheets = new XLWorkbook(_fileMerge[indexFile].Path).Worksheets; // Get sheets from file
+                var sheets = GetWorksheets(_fileMerge[indexFile].Path);
+                
+                SetMaximumProgressBar(progBarSheet, _progressFile[indexFile].Sheet.Total);
 
-                SetMaximumProgressBar(progBarSheet, _progress.File[indexFile].Sheet.Length);
-                for (int indexSheet = 0; indexSheet < _progress.File[indexFile].Sheet.Length; indexSheet++) // Loop in sheets
+                for (int indexSheet = 0; indexSheet < _progressFile[indexFile].Sheet.Total; indexSheet++) // Loop in sheets
                 {
                     if (CancellationPending(_eventDoWork))
                         return string.Empty;
 
                     var sheet = sheets.Worksheet(indexSheet + 1);
 
-                    UpdateLogReadSheet(sheet.Name, false, _progress.File[indexFile].Sheet[indexSheet].Rows.Total);
-                    UpdateProgress(_progress.File[indexFile].Sheet[indexSheet], indexSheet, sheet.Name);
+                    UpdateLogReadSheet(sheet.Name, false);
+                    UpdateProgress(_progressFile[indexFile].Sheet, indexSheet, sheet.Name);
 
-                    SetMaximumProgressBar(progBarRow, _progress.File[indexFile].Sheet[indexSheet].Rows.Total);
-
-                    if (_headerLength > _progress.File[indexFile].Sheet[indexSheet].Rows.Total)
-                    {
-                        UpdateLogReadSheet(sheet.Name, true);
-                        continue;
-                    }
-
-                    var initialIndex = _headerLength - 1;
-                    for (int indexRow = initialIndex; indexRow < _progress.File[indexFile].Sheet[indexSheet].Rows.Total; indexRow++) // Loop in rows
+                    for (int indexRow = GetInitialIndex(); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
                     {
                         if (CancellationPending(_eventDoWork))
                             return string.Empty;
 
-                        UpdateProgress(_progress.File[indexFile].Sheet[indexSheet].Rows, indexRow);
-
                         var row = GetRow(sheet.Row(indexRow + 1), _fileMerge[indexFile].Separator);
-
-                        //#region Validate number of header columns
-                        /* If the number of columns in the worksheet to be imported is greater than the 
-                        number of columns in the first worksheet, the worksheet is discarded. */
-                        //if (_numberHeaderColumns == 0)
-                        //{
-                        //    _numberHeaderColumns = row.RowUsed().CellCount();
-                        //}
-
-                        //if (_numberHeaderColumns != row.RowUsed().CellCount())
-                        //{
-                        //    break;
-                        //}
-                        //#endregion
 
                         _columnReturnFileCount = 1;
 
                         switch (_selectedHeaderAction)
                         {
                             case SelectedHeaderActionEnum.ConsiderFirstFile:
-                                if (indexFile == 0 && indexSheet == 0 && indexRow == initialIndex)
+                                if (indexFile == 0 && indexSheet == 0 && indexRow == GetInitialIndex())
                                 {
                                     if (!AddNewRow(row.RowUsed().CellCount(), row))
                                         return string.Empty;
 
-                                    _rowReturnFileCount += 1;
+                                    SetIncrementRowFileCount();
                                 }
-                                else if (indexRow != initialIndex)
+                                else if (indexRow != GetInitialIndex())
                                 {
                                     if (!AddNewRow(row.RowUsed().CellCount(), row))
                                         return string.Empty;
 
-                                    _rowReturnFileCount += 1;
+                                    SetIncrementRowFileCount();
                                 }
                                 break;
                             case SelectedHeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
-                                if (indexRow == initialIndex)
+                                if (indexRow == GetInitialIndex())
                                 {
                                     continue;
                                 }
@@ -293,14 +248,14 @@ namespace ExcelMerge.Forms
                                     if (!AddNewRow(row.RowUsed().CellCount(), row))
                                         return string.Empty;
 
-                                    _rowReturnFileCount += 1;
+                                    SetIncrementRowFileCount();
                                     break;
                                 }
                             case SelectedHeaderActionEnum.None:
                                 if (!AddNewRow(row.RowUsed().CellCount(), row))
                                     return string.Empty;
 
-                                _rowReturnFileCount += 1;
+                                SetIncrementRowFileCount();
                                 break;
                         }
                     }
