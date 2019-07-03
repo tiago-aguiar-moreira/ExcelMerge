@@ -40,7 +40,6 @@
             this.pnlSettings = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.lblSeparador = new System.Windows.Forms.Label();
-            this.btnConfigs = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.headerLength = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -52,19 +51,23 @@
             this.lblDefaultDirectorySaveFiles = new System.Windows.Forms.Label();
             this.lblAction = new System.Windows.Forms.Label();
             this.cbxAction = new System.Windows.Forms.ComboBox();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnConfigs = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.pnlFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).BeginInit();
             this.pnlSettings.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.headerLength)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnConfigs);
             this.panel1.Controls.Add(this.btnDeleteAll);
             this.panel1.Controls.Add(this.btnAdd);
             this.panel1.Controls.Add(this.btnDelete);
@@ -132,9 +135,9 @@
             this.pnlFiles.Controls.Add(this.gridVwFiles);
             this.pnlFiles.Controls.Add(this.panel1);
             this.pnlFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlFiles.Location = new System.Drawing.Point(0, 227);
+            this.pnlFiles.Location = new System.Drawing.Point(0, 157);
             this.pnlFiles.Name = "pnlFiles";
-            this.pnlFiles.Size = new System.Drawing.Size(949, 352);
+            this.pnlFiles.Size = new System.Drawing.Size(949, 422);
             this.pnlFiles.TabIndex = 4;
             // 
             // gridVwFiles
@@ -143,22 +146,20 @@
             this.gridVwFiles.AllowUserToDeleteRows = false;
             this.gridVwFiles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridVwFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column1,
+            this.Column3,
             this.Column2,
-            this.Column3});
+            this.Column1});
             this.gridVwFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridVwFiles.Location = new System.Drawing.Point(0, 56);
             this.gridVwFiles.Name = "gridVwFiles";
             this.gridVwFiles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridVwFiles.Size = new System.Drawing.Size(949, 296);
-            this.gridVwFiles.TabIndex = 2;
+            this.gridVwFiles.Size = new System.Drawing.Size(949, 366);
+            this.gridVwFiles.TabIndex = 1;
             // 
             // pnlSettings
             // 
             this.pnlSettings.BackColor = System.Drawing.SystemColors.Control;
-            this.pnlSettings.Controls.Add(this.textBox1);
-            this.pnlSettings.Controls.Add(this.lblSeparador);
-            this.pnlSettings.Controls.Add(this.btnConfigs);
+            this.pnlSettings.Controls.Add(this.groupBox2);
             this.pnlSettings.Controls.Add(this.groupBox1);
             this.pnlSettings.Controls.Add(this.btnBrowserFolder);
             this.pnlSettings.Controls.Add(this.txtDefaultDirectorySaveFiles);
@@ -168,36 +169,26 @@
             this.pnlSettings.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlSettings.Location = new System.Drawing.Point(0, 0);
             this.pnlSettings.Name = "pnlSettings";
-            this.pnlSettings.Size = new System.Drawing.Size(949, 227);
+            this.pnlSettings.Size = new System.Drawing.Size(949, 157);
             this.pnlSettings.TabIndex = 0;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(435, 182);
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.Location = new System.Drawing.Point(6, 48);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(358, 26);
-            this.textBox1.TabIndex = 8;
+            this.textBox1.Size = new System.Drawing.Size(112, 26);
+            this.textBox1.TabIndex = 1;
             // 
             // lblSeparador
             // 
             this.lblSeparador.AutoSize = true;
-            this.lblSeparador.Location = new System.Drawing.Point(431, 150);
+            this.lblSeparador.Location = new System.Drawing.Point(6, 22);
             this.lblSeparador.Name = "lblSeparador";
             this.lblSeparador.Size = new System.Drawing.Size(84, 20);
-            this.lblSeparador.TabIndex = 7;
+            this.lblSeparador.TabIndex = 0;
             this.lblSeparador.Text = "Separador";
-            // 
-            // btnConfigs
-            // 
-            this.btnConfigs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConfigs.Location = new System.Drawing.Point(817, 3);
-            this.btnConfigs.Name = "btnConfigs";
-            this.btnConfigs.Size = new System.Drawing.Size(129, 29);
-            this.btnConfigs.TabIndex = 0;
-            this.btnConfigs.Tag = "1";
-            this.btnConfigs.Text = "Configurações";
-            this.btnConfigs.UseVisualStyleBackColor = true;
-            this.btnConfigs.Click += new System.EventHandler(this.btnConfig_Click);
             // 
             // groupBox1
             // 
@@ -205,10 +196,10 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.lblHeader);
             this.groupBox1.Controls.Add(this.cbxHeader);
-            this.groupBox1.Location = new System.Drawing.Point(10, 128);
+            this.groupBox1.Location = new System.Drawing.Point(4, 64);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(415, 89);
-            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = " Cabeçalho ";
             // 
@@ -241,9 +232,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(276, 26);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 20);
+            this.label1.Size = new System.Drawing.Size(92, 20);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Tamanho (linhas)";
+            this.label1.Text = "Linha Inicial";
             // 
             // lblHeader
             // 
@@ -251,9 +242,9 @@
             this.lblHeader.Location = new System.Drawing.Point(7, 22);
             this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(129, 20);
+            this.lblHeader.Size = new System.Drawing.Size(86, 20);
             this.lblHeader.TabIndex = 0;
-            this.lblHeader.Text = "Como considerar";
+            this.lblHeader.Text = "Considerar";
             // 
             // cbxHeader
             // 
@@ -272,10 +263,10 @@
             this.btnBrowserFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowserFolder.ImageIndex = 0;
             this.btnBrowserFolder.ImageList = this.imageList1;
-            this.btnBrowserFolder.Location = new System.Drawing.Point(905, 82);
+            this.btnBrowserFolder.Location = new System.Drawing.Point(899, 18);
             this.btnBrowserFolder.Name = "btnBrowserFolder";
             this.btnBrowserFolder.Size = new System.Drawing.Size(40, 40);
-            this.btnBrowserFolder.TabIndex = 5;
+            this.btnBrowserFolder.TabIndex = 2;
             this.btnBrowserFolder.UseVisualStyleBackColor = true;
             this.btnBrowserFolder.Click += new System.EventHandler(this.BtnBrowserFolder_Click);
             // 
@@ -291,45 +282,81 @@
             // 
             this.txtDefaultDirectorySaveFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDefaultDirectorySaveFiles.Location = new System.Drawing.Point(10, 96);
+            this.txtDefaultDirectorySaveFiles.Location = new System.Drawing.Point(4, 32);
             this.txtDefaultDirectorySaveFiles.Name = "txtDefaultDirectorySaveFiles";
             this.txtDefaultDirectorySaveFiles.Size = new System.Drawing.Size(889, 26);
-            this.txtDefaultDirectorySaveFiles.TabIndex = 4;
+            this.txtDefaultDirectorySaveFiles.TabIndex = 1;
             this.txtDefaultDirectorySaveFiles.TextChanged += new System.EventHandler(this.TxtDefaultDirectorySaveFiles_TextChanged);
             this.txtDefaultDirectorySaveFiles.Validating += new System.ComponentModel.CancelEventHandler(this.TxtDefaultDirectorySaveFiles_Validating);
             // 
             // lblDefaultDirectorySaveFiles
             // 
             this.lblDefaultDirectorySaveFiles.AutoSize = true;
-            this.lblDefaultDirectorySaveFiles.Location = new System.Drawing.Point(9, 73);
+            this.lblDefaultDirectorySaveFiles.Location = new System.Drawing.Point(3, 9);
             this.lblDefaultDirectorySaveFiles.Name = "lblDefaultDirectorySaveFiles";
             this.lblDefaultDirectorySaveFiles.Size = new System.Drawing.Size(270, 20);
-            this.lblDefaultDirectorySaveFiles.TabIndex = 3;
+            this.lblDefaultDirectorySaveFiles.TabIndex = 0;
             this.lblDefaultDirectorySaveFiles.Text = "Caminho padrão para salvar arquivos";
             // 
             // lblAction
             // 
             this.lblAction.AutoSize = true;
-            this.lblAction.Location = new System.Drawing.Point(10, 15);
+            this.lblAction.Location = new System.Drawing.Point(556, 86);
             this.lblAction.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAction.Name = "lblAction";
-            this.lblAction.Size = new System.Drawing.Size(229, 20);
-            this.lblAction.TabIndex = 1;
-            this.lblAction.Text = "Ação ao fim do processamento";
+            this.lblAction.Size = new System.Drawing.Size(190, 20);
+            this.lblAction.TabIndex = 5;
+            this.lblAction.Text = "Ao fim do processamento";
             // 
             // cbxAction
             // 
-            this.cbxAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxAction.FormattingEnabled = true;
-            this.cbxAction.Location = new System.Drawing.Point(10, 40);
+            this.cbxAction.Location = new System.Drawing.Point(556, 111);
             this.cbxAction.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxAction.Name = "cbxAction";
-            this.cbxAction.Size = new System.Drawing.Size(935, 28);
-            this.cbxAction.TabIndex = 2;
+            this.cbxAction.Size = new System.Drawing.Size(294, 28);
+            this.cbxAction.TabIndex = 6;
             this.cbxAction.SelectedIndexChanged += new System.EventHandler(this.cbxAction_SelectedIndexChanged);
             this.cbxAction.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
+            // 
+            // btnConfigs
+            // 
+            this.btnConfigs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConfigs.Location = new System.Drawing.Point(575, 5);
+            this.btnConfigs.Name = "btnConfigs";
+            this.btnConfigs.Size = new System.Drawing.Size(135, 46);
+            this.btnConfigs.TabIndex = 4;
+            this.btnConfigs.Tag = "1";
+            this.btnConfigs.Text = "Configurações";
+            this.btnConfigs.UseVisualStyleBackColor = true;
+            this.btnConfigs.Click += new System.EventHandler(this.btnConfig_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.lblSeparador);
+            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Location = new System.Drawing.Point(425, 64);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(124, 89);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = " CSV ";
+            // 
+            // Column3
+            // 
+            this.Column3.Frozen = true;
+            this.Column3.HeaderText = "Linha Inicial do Cabeçalho";
+            this.Column3.Name = "Column3";
+            this.Column3.Width = 180;
+            // 
+            // Column2
+            // 
+            this.Column2.DataPropertyName = "Separator";
+            this.Column2.Frozen = true;
+            this.Column2.HeaderText = "Separador CSV";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 150;
             // 
             // Column1
             // 
@@ -338,18 +365,7 @@
             this.Column1.HeaderText = "Arquivo";
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
-            this.Column1.Width = 450;
-            // 
-            // Column2
-            // 
-            this.Column2.DataPropertyName = "Separator";
-            this.Column2.HeaderText = "Separador";
-            this.Column2.Name = "Column2";
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Linha cabeçalho";
-            this.Column3.Name = "Column3";
+            this.Column1.Width = 530;
             // 
             // MainForm
             // 
@@ -371,6 +387,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.headerLength)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -394,13 +412,14 @@
         private System.Windows.Forms.Label lblDefaultDirectorySaveFiles;
         private System.Windows.Forms.Label lblAction;
         private System.Windows.Forms.ComboBox cbxAction;
-        private System.Windows.Forms.Button btnConfigs;
         private System.Windows.Forms.DataGridView gridVwFiles;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label lblSeparador;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.Button btnConfigs;
+        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
     }
 }
 

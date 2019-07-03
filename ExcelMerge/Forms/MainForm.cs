@@ -214,20 +214,7 @@ namespace ExcelMerge
                 }
             }
 
-            if (show)
-            {
-                if (pnlSettings.Height != _pnlSettingsHeight)
-                {
-                    pnlSettings.Height = _pnlSettingsHeight;
-                }
-            }
-            else
-            {
-                if (pnlSettings.Height == _pnlSettingsHeight)
-                {
-                    pnlSettings.Height = btnConfigs.Height + 6;
-                }
-            }
+            pnlSettings.Visible = !pnlSettings.Visible;
         }
 
         private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) =>
