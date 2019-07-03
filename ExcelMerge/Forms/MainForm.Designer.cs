@@ -345,6 +345,7 @@
             // 
             // Column3
             // 
+            this.Column3.DataPropertyName = "HeaderLength";
             this.Column3.Frozen = true;
             this.Column3.HeaderText = "Linha Inicial do Cabeçalho";
             this.Column3.Name = "Column3";
@@ -352,7 +353,7 @@
             // 
             // Column2
             // 
-            this.Column2.DataPropertyName = "Separator";
+            this.Column2.DataPropertyName = "SeparatorCSV";
             this.Column2.Frozen = true;
             this.Column2.HeaderText = "Separador CSV";
             this.Column2.Name = "Column2";

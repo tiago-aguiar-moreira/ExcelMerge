@@ -42,23 +42,23 @@ namespace ExcelMerge
             gridVwFiles.DataSource = _listFiles;
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
             headerLength.Value = _appConfig.HeaderLength;
-            LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);
-            LoadHeaderAction(_appConfig.SelectedHeaderAction);
+            LoadEndProcessoAction(_appConfig.EndProcessAction);
+            LoadHeaderAction(_appConfig.HeaderAction);
             pnlSettings.Visible = _appConfig.ShowConfigs;
         }
 
-        private void LoadEndProcessoAction(SelectedEndProcessActionEnum selectedEndProcessAction)
+        private void LoadEndProcessoAction(EndProcessActionEnum selectedEndProcessAction)
         {
-            var descriptions = EnumUtils.GetDescription<SelectedEndProcessActionEnum>();
+            var descriptions = EnumUtils.GetDescription<EndProcessActionEnum>();
 
             descriptions.ToList().ForEach(f => cbxAction.Items.Add(f));
 
             cbxAction.SelectedIndex = (int)selectedEndProcessAction;
         }
 
-        private void LoadHeaderAction(SelectedHeaderActionEnum selectedHeaderAction)
+        private void LoadHeaderAction(HeaderActionEnum selectedHeaderAction)
         {
-            var descriptions = EnumUtils.GetDescription<SelectedHeaderActionEnum>();
+            var descriptions = EnumUtils.GetDescription<HeaderActionEnum>();
 
             descriptions.ToList().ForEach(f => cbxHeader.Items.Add(f));
 
@@ -130,14 +130,13 @@ namespace ExcelMerge
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
                     directoryDestiny,
-                    _appConfig.SelectedHeaderAction,
-                    _appConfig.HeaderLength);
+                    _appConfig.HeaderAction);
 
                 frmProgress.ShowDialog();
 
                 if (!string.IsNullOrEmpty(frmProgress.NewFile))
                 {
-                    ExecuteAction(frmProgress.NewFile, _appConfig.SelectedEndProcessAction);
+                    ExecuteAction(frmProgress.NewFile, _appConfig.EndProcessAction);
                 }
 
                 frmProgress.Dispose();
@@ -157,19 +156,19 @@ namespace ExcelMerge
             }
         }
 
-        private void ExecuteAction(string path, SelectedEndProcessActionEnum processAction)
+        private void ExecuteAction(string path, EndProcessActionEnum processAction)
         {
             switch (processAction)
             {
-                case SelectedEndProcessActionEnum.None:
+                case EndProcessActionEnum.None:
                     break;
-                case SelectedEndProcessActionEnum.OpenFile:
+                case EndProcessActionEnum.OpenFile:
                     Process.Start(path);
                     break;
-                case SelectedEndProcessActionEnum.OpenDir:
+                case EndProcessActionEnum.OpenDir:
                     Process.Start(Path.GetDirectoryName(path));
                     break;
-                case SelectedEndProcessActionEnum.AskIfShouldOpenFile:
+                case EndProcessActionEnum.AskIfShouldOpenFile:
                     if (MessageBox.Show(
                         this,
                         "Deseja abrir o arquivo gerado?",
@@ -180,7 +179,7 @@ namespace ExcelMerge
                         Process.Start(path);
                     }
                     break;
-                case SelectedEndProcessActionEnum.AskIfShouldOpenDir:
+                case EndProcessActionEnum.AskIfShouldOpenDir:
                     if (MessageBox.Show(
                         this,
                         "Deseja abrir o diretório onde o arquivo foi gerado?",
@@ -205,7 +204,7 @@ namespace ExcelMerge
         }
 
         private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) =>
-            _appConfig.SelectedEndProcessAction = (SelectedEndProcessActionEnum)(sender as ComboBox).SelectedIndex;
+            _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
 
         private void BtnBrowserFolder_Click(object sender, EventArgs e)
         {
@@ -252,7 +251,7 @@ namespace ExcelMerge
             _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
 
         private void CbxHeader_SelectedIndexChanged(object sender, EventArgs e) =>
-            _appConfig.SelectedHeaderAction = (SelectedHeaderActionEnum)(sender as ComboBox).SelectedIndex;
+            _appConfig.HeaderAction = (HeaderActionEnum)(sender as ComboBox).SelectedIndex;
 
         private void HeaderLength_ValueChanged(object sender, EventArgs e) =>
              _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());

@@ -2,7 +2,7 @@
 
 namespace ExcelMerge.Enumerator
 {
-    public enum SelectedEndProcessActionEnum
+    public enum EndProcessActionEnum
     {
         [Description("Nenhuma")]
         None = 0,

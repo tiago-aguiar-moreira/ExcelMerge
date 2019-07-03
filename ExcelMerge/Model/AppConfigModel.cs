@@ -4,8 +4,8 @@ namespace ExcelMerge.Model
 {
     public class AppConfigModel
     {
-        public SelectedEndProcessActionEnum SelectedEndProcessAction { get; set; }
-        public SelectedHeaderActionEnum SelectedHeaderAction { get; set; }
+        public EndProcessActionEnum EndProcessAction { get; set; }
+        public HeaderActionEnum HeaderAction { get; set; }
         public string DefaultDirectorySaveFiles { get; set; }
         public string RecentDirectorySaveFiles { get; set; }
         public byte HeaderLength { get; set; }
@@ -13,8 +13,8 @@ namespace ExcelMerge.Model
 
         public AppConfigModel()
         {
-            SelectedEndProcessAction = SelectedEndProcessActionEnum.None;
-            SelectedHeaderAction = SelectedHeaderActionEnum.None;
+            EndProcessAction = EndProcessActionEnum.None;
+            HeaderAction = HeaderActionEnum.None;
             DefaultDirectorySaveFiles = string.Empty;
             RecentDirectorySaveFiles = string.Empty;
             HeaderLength = 1;

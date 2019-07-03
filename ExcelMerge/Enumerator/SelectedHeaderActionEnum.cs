@@ -2,7 +2,7 @@
 
 namespace ExcelMerge.Enumerator
 {
-    public enum SelectedHeaderActionEnum
+    public enum HeaderActionEnum
     {
         [Description("Nenhuma ação")]
         None = 0,

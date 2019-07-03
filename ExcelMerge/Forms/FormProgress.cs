@@ -14,22 +14,19 @@ namespace ExcelMerge.Forms
 {
     public partial class FormProgress : Form
     {
-        private int _rowReturnFileCount;
-        private int _columnReturnFileCount;
-        private int _headerLength;
-        //private int _numberHeaderColumns;
-        private string _destinyDirectory;
-        private FileMerge[] _fileMerge;
-        private MergeProgessFiles[] _progressFile;
-        private SelectedHeaderActionEnum _selectedHeaderAction;
-        private DoWorkEventArgs _eventDoWork;
-        private IXLWorkbook _mainWorkbook;
-        private IXLWorksheet _mainWorksheet;
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
+        private int _rowReturnFileCount;
+        private readonly string _destinyDirectory;
+        private readonly FileMerge[] _fileMerge;
+        private readonly HeaderActionEnum _selectedHeaderAction;
+        private readonly IXLWorkbook _mainWorkbook;
+        private readonly IXLWorksheet _mainWorksheet;
+        private MergeProgessFiles[] _progressFile;
+        private DoWorkEventArgs _eventDoWork;
 
         public string NewFile { get; private set; }
 
-        public FormProgress(FileMerge[] fileMerge, string destinyDirectory, SelectedHeaderActionEnum selectedHeaderActionEnum, byte headerLength)
+        public FormProgress(FileMerge[] fileMerge, string destinyDirectory, HeaderActionEnum selectedHeaderActionEnum)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -37,7 +34,6 @@ namespace ExcelMerge.Forms
             _fileMerge = fileMerge;
             _destinyDirectory = destinyDirectory;
             _selectedHeaderAction = selectedHeaderActionEnum;
-            _headerLength = headerLength;
             _mainWorkbook = new XLWorkbook();
             _mainWorksheet = _mainWorkbook.Worksheets.Add("Planilha 1");
             _rowReturnFileCount = 1;
@@ -128,6 +124,7 @@ namespace ExcelMerge.Forms
                 
                 text += $"Planilha: {sheetName}";
                 text += $"{Environment.NewLine}";
+                text += $"{Environment.NewLine}";
 
                 richTxt.SelectionStart = richTxt.TextLength;
                 if (error)
@@ -171,7 +168,7 @@ namespace ExcelMerge.Forms
         /// <returns></returns>
         private IXLWorksheets GetWorksheets(FileMerge fileMerge) => new XLWorkbook(fileMerge.Path).Worksheets;
 
-        private int GetInitialIndex() => _headerLength - 1;
+        private int GetInitialIndex(int indexFile) => _fileMerge[indexFile].HeaderLength - 1;
 
         private void SetIncrementRowFileCount() => _rowReturnFileCount += 1;
 
@@ -194,7 +191,6 @@ namespace ExcelMerge.Forms
                 backWorker.ReportProgress(indexFile);
 
                 var fileName = Path.GetFileName(_fileMerge[indexFile].Path);
-                //_fileCSV = Path.GetExtension(_filePath[indexFile]) == ".csv";
 
                 UpdateLogReadFile(fileName);
                 UpdateProgress(_progressFile[indexFile], indexFile, fileName);
@@ -213,19 +209,17 @@ namespace ExcelMerge.Forms
                     UpdateLogReadSheet(sheet.Name, false);
                     UpdateProgress(_progressFile[indexFile].Sheet, indexSheet, sheet.Name);
 
-                    for (int indexRow = GetInitialIndex(); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
+                    for (int indexRow = GetInitialIndex(indexFile); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
                     {
                         if (CancellationPending(_eventDoWork))
                             return string.Empty;
 
-                        var row = GetRow(sheet.Row(indexRow + 1), _fileMerge[indexFile].Separator);
-
-                        _columnReturnFileCount = 1;
+                        var row = GetRow(sheet.Row(indexRow + 1), _fileMerge[indexFile].SeparatorCSV);
 
                         switch (_selectedHeaderAction)
                         {
-                            case SelectedHeaderActionEnum.ConsiderFirstFile:
-                                if ((indexFile == 0 && indexSheet == 0 && indexRow == GetInitialIndex()) || (indexRow != GetInitialIndex()))
+                            case HeaderActionEnum.ConsiderFirstFile:
+                                if ((indexFile == 0 && indexSheet == 0 && indexRow == GetInitialIndex(indexFile)) || (indexRow != GetInitialIndex(indexFile)))
                                 {
                                     if (!AddNewRow(row))
                                         return string.Empty;
@@ -233,8 +227,8 @@ namespace ExcelMerge.Forms
                                     SetIncrementRowFileCount();
                                 }
                                 break;
-                            case SelectedHeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
-                                if (indexRow == GetInitialIndex())
+                            case HeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
+                                if (indexRow == GetInitialIndex(indexFile))
                                     continue;
 
                                 if (!AddNewRow(row))
@@ -242,7 +236,7 @@ namespace ExcelMerge.Forms
 
                                 SetIncrementRowFileCount();
                                 break;
-                            case SelectedHeaderActionEnum.None:
+                            case HeaderActionEnum.None:
                                 if (!AddNewRow(row))
                                     return string.Empty;
 
@@ -258,14 +252,15 @@ namespace ExcelMerge.Forms
 
         private bool AddNewRow(IXLRow row)
         {
+            int columnReturnFileCount = 1;
             for (int indexCell = 0; indexCell < row.RowUsed().CellCount(); indexCell++) // Loop in cells
             {
                 if (CancellationPending(_eventDoWork))
                     return false;
 
-                _mainWorksheet.Cell(_rowReturnFileCount, _columnReturnFileCount).Value = row.Cell(indexCell + 1).Value.ToString();
+                _mainWorksheet.Cell(_rowReturnFileCount, columnReturnFileCount).Value = row.Cell(indexCell + 1).Value.ToString();
 
-                _columnReturnFileCount += 1;
+                columnReturnFileCount += 1;
             }
 
             return true;
@@ -296,7 +291,6 @@ namespace ExcelMerge.Forms
             NewFile = Execute();
 
             btnCancelar.BeginInvoke(new Action(() => { btnCancelar.Enabled = false; }));
-            ;
         }
 
         /// <summary>
@@ -356,13 +350,9 @@ namespace ExcelMerge.Forms
     public class FileMerge
     {
         public string Path { get; set; }
-        public string Separator { get; set; }
+        public byte HeaderLength { get; set; }
+        public string SeparatorCSV { get; set; }
 
-        public FileMerge(string name)
-        {
-            Path = name;
-            Separator = string.Empty;
-        }
-
+        public FileMerge(string path) => Path = path;
     }
 }
