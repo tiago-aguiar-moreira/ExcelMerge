@@ -57,16 +57,16 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(942, 442);
+            this.panel3.Size = new System.Drawing.Size(781, 442);
             this.panel3.TabIndex = 13;
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.richTxt);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(520, 0);
+            this.panel2.Location = new System.Drawing.Point(392, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(422, 442);
+            this.panel2.Size = new System.Drawing.Size(389, 442);
             this.panel2.TabIndex = 12;
             // 
             // richTxt
@@ -75,7 +75,7 @@
             this.richTxt.Location = new System.Drawing.Point(0, 0);
             this.richTxt.Name = "richTxt";
             this.richTxt.ReadOnly = true;
-            this.richTxt.Size = new System.Drawing.Size(422, 442);
+            this.richTxt.Size = new System.Drawing.Size(389, 442);
             this.richTxt.TabIndex = 1;
             this.richTxt.Text = "";
             // 
@@ -90,12 +90,12 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(520, 442);
+            this.panel1.Size = new System.Drawing.Size(392, 442);
             this.panel1.TabIndex = 11;
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(4, 142);
+            this.btnCancelar.Location = new System.Drawing.Point(97, 142);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(194, 45);
             this.btnCancelar.TabIndex = 17;
@@ -132,7 +132,7 @@
             this.progBarSheet.Location = new System.Drawing.Point(4, 99);
             this.progBarSheet.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progBarSheet.Name = "progBarSheet";
-            this.progBarSheet.Size = new System.Drawing.Size(508, 35);
+            this.progBarSheet.Size = new System.Drawing.Size(380, 35);
             this.progBarSheet.TabIndex = 9;
             // 
             // progBarFile
@@ -142,18 +142,20 @@
             this.progBarFile.Location = new System.Drawing.Point(4, 34);
             this.progBarFile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progBarFile.Name = "progBarFile";
-            this.progBarFile.Size = new System.Drawing.Size(508, 35);
+            this.progBarFile.Size = new System.Drawing.Size(380, 35);
             this.progBarFile.TabIndex = 7;
             // 
             // FormProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(942, 442);
+            this.ClientSize = new System.Drawing.Size(781, 442);
             this.Controls.Add(this.panel3);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Excel Merge";

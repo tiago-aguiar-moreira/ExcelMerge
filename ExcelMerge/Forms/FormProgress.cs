@@ -294,6 +294,9 @@ namespace ExcelMerge.Forms
         {
             _eventDoWork = e;
             NewFile = Execute();
+
+            btnCancelar.BeginInvoke(new Action(() => { btnCancelar.Enabled = false; }));
+            ;
         }
 
         /// <summary>
@@ -347,8 +350,7 @@ namespace ExcelMerge.Forms
             btnCancelar.Enabled = false;
         }
 
-        private void FormProgress_FormClosing(object sender, FormClosingEventArgs e) =>
-            btnCancelar_Click(sender, e);
+        private void FormProgress_FormClosing(object sender, FormClosingEventArgs e) => btnCancelar_Click(sender, e);
     }
 
     public class FileMerge
