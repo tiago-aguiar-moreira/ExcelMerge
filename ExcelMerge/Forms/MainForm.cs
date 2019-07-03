@@ -20,14 +20,12 @@ namespace ExcelMerge
         private BindingList<FileMerge> _listFiles;
         private ListChangedType[] _listEvents;
         private AppConfigModel _appConfig;
-        private int _pnlSettingsHeight;
 
         public MainForm()
         {
             InitializeComponent();
             this.SetBaseConfigs();
 
-            _pnlSettingsHeight = pnlSettings.Height;
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
             _listFiles = new BindingList<FileMerge>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
@@ -41,7 +39,7 @@ namespace ExcelMerge
 
             gridVwFiles.DataSource = _listFiles;
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
-            headerLength.Value = _appConfig.HeaderLength;
+            txtHeaderLength.Value = _appConfig.HeaderLength;
             LoadEndProcessoAction(_appConfig.EndProcessAction);
             LoadHeaderAction(_appConfig.HeaderAction);
             pnlSettings.Visible = _appConfig.ShowConfigs;
@@ -114,8 +112,7 @@ namespace ExcelMerge
             }
         }
 
-        private void btnDeleteAll_Click(object sender, EventArgs e)
-            => _listFiles.Clear();
+        private void btnDeleteAll_Click(object sender, EventArgs e) => _listFiles.Clear();
 
         private void btnRun_Click(object sender, EventArgs e)
         {
@@ -126,6 +123,15 @@ namespace ExcelMerge
                 var directoryDestiny = string.IsNullOrEmpty(_appConfig.DefaultDirectorySaveFiles)
                     ? _directoryApp 
                     : _appConfig.DefaultDirectorySaveFiles;
+
+                foreach (var file in _listFiles)
+                {
+                    if (file.HeaderLength <= 0)
+                        file.HeaderLength = byte.Parse(txtHeaderLength.Value.ToString());
+
+                    if (string.IsNullOrEmpty(file.SeparatorCSV))
+                        file.SeparatorCSV = txtSeparatorCSV.Text;
+                }
 
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),

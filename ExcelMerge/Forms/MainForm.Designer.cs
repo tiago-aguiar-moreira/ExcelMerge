@@ -31,17 +31,22 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnConfigs = new System.Windows.Forms.Button();
             this.btnDeleteAll = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.pnlFiles = new System.Windows.Forms.Panel();
             this.gridVwFiles = new System.Windows.Forms.DataGridView();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pnlSettings = new System.Windows.Forms.Panel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblSeparador = new System.Windows.Forms.Label();
+            this.txtSeparatorCSV = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.headerLength = new System.Windows.Forms.NumericUpDown();
+            this.txtHeaderLength = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.lblHeader = new System.Windows.Forms.Label();
             this.cbxHeader = new System.Windows.Forms.ComboBox();
@@ -51,18 +56,13 @@
             this.lblDefaultDirectorySaveFiles = new System.Windows.Forms.Label();
             this.lblAction = new System.Windows.Forms.Label();
             this.cbxAction = new System.Windows.Forms.ComboBox();
-            this.btnConfigs = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.pnlFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).BeginInit();
             this.pnlSettings.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.headerLength)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHeaderLength)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -78,6 +78,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(949, 56);
             this.panel1.TabIndex = 0;
+            // 
+            // btnConfigs
+            // 
+            this.btnConfigs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConfigs.Location = new System.Drawing.Point(575, 5);
+            this.btnConfigs.Name = "btnConfigs";
+            this.btnConfigs.Size = new System.Drawing.Size(135, 46);
+            this.btnConfigs.TabIndex = 4;
+            this.btnConfigs.Tag = "1";
+            this.btnConfigs.Text = "Configurações";
+            this.btnConfigs.UseVisualStyleBackColor = true;
+            this.btnConfigs.Click += new System.EventHandler(this.btnConfig_Click);
             // 
             // btnDeleteAll
             // 
@@ -156,6 +168,31 @@
             this.gridVwFiles.Size = new System.Drawing.Size(949, 366);
             this.gridVwFiles.TabIndex = 1;
             // 
+            // Column3
+            // 
+            this.Column3.DataPropertyName = "HeaderLength";
+            this.Column3.Frozen = true;
+            this.Column3.HeaderText = "Linha Inicial do Cabeçalho";
+            this.Column3.Name = "Column3";
+            this.Column3.Width = 130;
+            // 
+            // Column2
+            // 
+            this.Column2.DataPropertyName = "SeparatorCSV";
+            this.Column2.Frozen = true;
+            this.Column2.HeaderText = "Separador CSV";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 150;
+            // 
+            // Column1
+            // 
+            this.Column1.DataPropertyName = "Path";
+            this.Column1.Frozen = true;
+            this.Column1.HeaderText = "Arquivo";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Width = 580;
+            // 
             // pnlSettings
             // 
             this.pnlSettings.BackColor = System.Drawing.SystemColors.Control;
@@ -172,14 +209,16 @@
             this.pnlSettings.Size = new System.Drawing.Size(949, 157);
             this.pnlSettings.TabIndex = 0;
             // 
-            // textBox1
+            // groupBox2
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(6, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(112, 26);
-            this.textBox1.TabIndex = 1;
+            this.groupBox2.Controls.Add(this.lblSeparador);
+            this.groupBox2.Controls.Add(this.txtSeparatorCSV);
+            this.groupBox2.Location = new System.Drawing.Point(425, 64);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(124, 89);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = " CSV ";
             // 
             // lblSeparador
             // 
@@ -190,9 +229,18 @@
             this.lblSeparador.TabIndex = 0;
             this.lblSeparador.Text = "Separador";
             // 
+            // txtSeparatorCSV
+            // 
+            this.txtSeparatorCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSeparatorCSV.Location = new System.Drawing.Point(6, 48);
+            this.txtSeparatorCSV.Name = "txtSeparatorCSV";
+            this.txtSeparatorCSV.Size = new System.Drawing.Size(112, 26);
+            this.txtSeparatorCSV.TabIndex = 1;
+            // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.headerLength);
+            this.groupBox1.Controls.Add(this.txtHeaderLength);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.lblHeader);
             this.groupBox1.Controls.Add(this.cbxHeader);
@@ -203,29 +251,29 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = " Cabeçalho ";
             // 
-            // headerLength
+            // txtHeaderLength
             // 
-            this.headerLength.Location = new System.Drawing.Point(276, 49);
-            this.headerLength.Maximum = new decimal(new int[] {
+            this.txtHeaderLength.Location = new System.Drawing.Point(276, 49);
+            this.txtHeaderLength.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.headerLength.Minimum = new decimal(new int[] {
+            this.txtHeaderLength.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.headerLength.Name = "headerLength";
-            this.headerLength.Size = new System.Drawing.Size(131, 26);
-            this.headerLength.TabIndex = 3;
-            this.headerLength.Value = new decimal(new int[] {
+            this.txtHeaderLength.Name = "txtHeaderLength";
+            this.txtHeaderLength.Size = new System.Drawing.Size(131, 26);
+            this.txtHeaderLength.TabIndex = 3;
+            this.txtHeaderLength.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.headerLength.ValueChanged += new System.EventHandler(this.HeaderLength_ValueChanged);
-            this.headerLength.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
+            this.txtHeaderLength.ValueChanged += new System.EventHandler(this.HeaderLength_ValueChanged);
+            this.txtHeaderLength.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // label1
             // 
@@ -320,54 +368,6 @@
             this.cbxAction.SelectedIndexChanged += new System.EventHandler(this.cbxAction_SelectedIndexChanged);
             this.cbxAction.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
-            // btnConfigs
-            // 
-            this.btnConfigs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConfigs.Location = new System.Drawing.Point(575, 5);
-            this.btnConfigs.Name = "btnConfigs";
-            this.btnConfigs.Size = new System.Drawing.Size(135, 46);
-            this.btnConfigs.TabIndex = 4;
-            this.btnConfigs.Tag = "1";
-            this.btnConfigs.Text = "Configurações";
-            this.btnConfigs.UseVisualStyleBackColor = true;
-            this.btnConfigs.Click += new System.EventHandler(this.btnConfig_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.lblSeparador);
-            this.groupBox2.Controls.Add(this.textBox1);
-            this.groupBox2.Location = new System.Drawing.Point(425, 64);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(124, 89);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = " CSV ";
-            // 
-            // Column3
-            // 
-            this.Column3.DataPropertyName = "HeaderLength";
-            this.Column3.Frozen = true;
-            this.Column3.HeaderText = "Linha Inicial do Cabeçalho";
-            this.Column3.Name = "Column3";
-            this.Column3.Width = 130;
-            // 
-            // Column2
-            // 
-            this.Column2.DataPropertyName = "SeparatorCSV";
-            this.Column2.Frozen = true;
-            this.Column2.HeaderText = "Separador CSV";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 150;
-            // 
-            // Column1
-            // 
-            this.Column1.DataPropertyName = "Path";
-            this.Column1.Frozen = true;
-            this.Column1.HeaderText = "Arquivo";
-            this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
-            this.Column1.Width = 580;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -385,11 +385,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).EndInit();
             this.pnlSettings.ResumeLayout(false);
             this.pnlSettings.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.headerLength)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHeaderLength)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -404,7 +404,7 @@
         private System.Windows.Forms.Panel pnlSettings;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown headerLength;
+        private System.Windows.Forms.NumericUpDown txtHeaderLength;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblHeader;
         private System.Windows.Forms.ComboBox cbxHeader;
@@ -414,7 +414,7 @@
         private System.Windows.Forms.Label lblAction;
         private System.Windows.Forms.ComboBox cbxAction;
         private System.Windows.Forms.DataGridView gridVwFiles;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtSeparatorCSV;
         private System.Windows.Forms.Label lblSeparador;
         private System.Windows.Forms.Button btnConfigs;
         private System.Windows.Forms.GroupBox groupBox2;
