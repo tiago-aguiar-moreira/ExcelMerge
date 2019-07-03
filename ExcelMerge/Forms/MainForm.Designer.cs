@@ -348,7 +348,7 @@
             this.Column3.Frozen = true;
             this.Column3.HeaderText = "Linha Inicial do Cabeçalho";
             this.Column3.Name = "Column3";
-            this.Column3.Width = 180;
+            this.Column3.Width = 130;
             // 
             // Column2
             // 
@@ -365,7 +365,7 @@
             this.Column1.HeaderText = "Arquivo";
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
-            this.Column1.Width = 530;
+            this.Column1.Width = 580;
             // 
             // MainForm
             // 

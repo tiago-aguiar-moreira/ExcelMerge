@@ -44,7 +44,7 @@ namespace ExcelMerge
             headerLength.Value = _appConfig.HeaderLength;
             LoadEndProcessoAction(_appConfig.SelectedEndProcessAction);
             LoadHeaderAction(_appConfig.SelectedHeaderAction);
-            ShowSettings(_appConfig.ShowConfigs);
+            pnlSettings.Visible = _appConfig.ShowConfigs;
         }
 
         private void LoadEndProcessoAction(SelectedEndProcessActionEnum selectedEndProcessAction)
@@ -201,20 +201,7 @@ namespace ExcelMerge
         {
             _appConfig.ShowConfigs = !_appConfig.ShowConfigs;
             AppConfigManager.Save(_appConfig);
-            ShowSettings(_appConfig.ShowConfigs);
-        }
-
-        private void ShowSettings(bool show)
-        {
-            foreach (var control in pnlSettings.Controls.Cast<Control>())
-            {
-                if (control != btnConfigs)
-                {
-                    control.Visible = show;
-                }
-            }
-
-            pnlSettings.Visible = !pnlSettings.Visible;
+            pnlSettings.Visible = _appConfig.ShowConfigs;
         }
 
         private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) =>
