@@ -55,13 +55,13 @@ namespace ExcelMerge.Forms
             return newFileName;
         }
 
-        private void SetTotals(FileMerge[] filePath)
+        private void SetTotals(FileMerge[] file)
         {
-            _progressFile = new MergeProgessFiles[filePath.Length];
+            _progressFile = new MergeProgessFiles[file.Length];
 
             for (int index = 0; index < _progressFile.Length; index++) // Loop in files
             {
-                var sheets = new XLWorkbook(filePath[index].Path).Worksheets; // Get sheets from file
+                var sheets = new XLWorkbook(file[index].GetPath()).Worksheets; // Get sheets from file
 
                 _progressFile[index] = new MergeProgessFiles(sheets.Count);
             }
@@ -166,7 +166,7 @@ namespace ExcelMerge.Forms
         /// </summary>
         /// <param name="path">Path</param>
         /// <returns></returns>
-        private IXLWorksheets GetWorksheets(FileMerge fileMerge) => new XLWorkbook(fileMerge.Path).Worksheets;
+        private IXLWorksheets GetWorksheets(FileMerge fileMerge) => new XLWorkbook(fileMerge.GetPath()).Worksheets;
 
         private int GetInitialIndex(int indexFile) => _fileMerge[indexFile].HeaderLength - 1;
 
@@ -190,10 +190,8 @@ namespace ExcelMerge.Forms
 
                 backWorker.ReportProgress(indexFile);
 
-                var fileName = Path.GetFileName(_fileMerge[indexFile].Path);
-
-                UpdateLogReadFile(fileName);
-                UpdateProgress(_progressFile[indexFile], indexFile, fileName);
+                UpdateLogReadFile(_fileMerge[indexFile].FileName);
+                UpdateProgress(_progressFile[indexFile], indexFile, _fileMerge[indexFile].FileName);
 
                 var sheets = GetWorksheets(_fileMerge[indexFile]);
                 
@@ -349,10 +347,39 @@ namespace ExcelMerge.Forms
 
     public class FileMerge
     {
-        public string Path { get; set; }
+        private string _fileName;
+        private string _directory;
+        public string FileName
+        {
+            get
+            {
+                return _fileName;
+            }
+            set
+            {
+                _fileName = Path.GetFileName(value);
+            }
+        }
+        public string Directory
+        {
+            get
+            {
+                return _directory;
+            }
+            set
+            {
+                _directory = Path.GetDirectoryName(value);
+            }
+        }
         public byte HeaderLength { get; set; }
         public string SeparatorCSV { get; set; }
 
-        public FileMerge(string path) => Path = path;
+        public FileMerge(string path)
+        {
+            FileName = path;
+            Directory = path;
+        }
+
+        public string GetPath() => $"{_directory}\\{_fileName}";
     }
 }

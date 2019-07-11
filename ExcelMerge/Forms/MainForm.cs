@@ -87,13 +87,13 @@ namespace ExcelMerge
                 {
                     foreach (var item in ofd.FileNames)
                     {
-                        if (!_listFiles.Any(a => a.Path.ToLower() == item))
+                        if (!_listFiles.Any(a => a.GetPath().ToLower() == item.ToLower()))
                         {
                             _listFiles.Add(new FileMerge(item));
                         }
                     }
 
-                    _appConfig.RecentDirectorySaveFiles = Path.GetDirectoryName(_listFiles.LastOrDefault().Path);
+                    _appConfig.RecentDirectorySaveFiles = _listFiles.LastOrDefault().Directory;
                     AppConfigManager.Save(_appConfig);
                 }
             }
