@@ -33,6 +33,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.richTxt = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblProcessedRows = new System.Windows.Forms.Label();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.lblSheet = new System.Windows.Forms.Label();
             this.lblFile = new System.Windows.Forms.Label();
@@ -82,6 +83,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.lblProcessedRows);
             this.panel1.Controls.Add(this.btnCancelar);
             this.panel1.Controls.Add(this.lblSheet);
             this.panel1.Controls.Add(this.lblFile);
@@ -93,9 +95,20 @@
             this.panel1.Size = new System.Drawing.Size(500, 442);
             this.panel1.TabIndex = 11;
             // 
+            // lblProcessedRows
+            // 
+            this.lblProcessedRows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblProcessedRows.AutoSize = true;
+            this.lblProcessedRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProcessedRows.Location = new System.Drawing.Point(3, 139);
+            this.lblProcessedRows.Name = "lblProcessedRows";
+            this.lblProcessedRows.Size = new System.Drawing.Size(270, 29);
+            this.lblProcessedRows.TabIndex = 18;
+            this.lblProcessedRows.Text = "Linhas processadas: {0}";
+            // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(151, 142);
+            this.btnCancelar.Location = new System.Drawing.Point(170, 200);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(194, 45);
             this.btnCancelar.TabIndex = 17;
@@ -179,5 +192,6 @@
         private System.Windows.Forms.Label lblFile;
         private System.Windows.Forms.ProgressBar progBarSheet;
         private System.Windows.Forms.ProgressBar progBarFile;
+        private System.Windows.Forms.Label lblProcessedRows;
     }
 }

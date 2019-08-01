@@ -14,6 +14,7 @@ namespace ExcelMerge.Forms
 {
     public partial class FormProgress : Form
     {
+        private const string _textLabelCurrentProgress = "Linhas processadas: {0}";
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
         private int _rowReturnFileCount;
         private readonly string _destinyDirectory;
@@ -45,7 +46,8 @@ namespace ExcelMerge.Forms
             backWorker.RunWorkerAsync(); //executes the process asynchronously
         }
 
-        private string NewFileName(string destinyDirectory) => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
+        private string NewFileName(string destinyDirectory)
+            => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
 
         private string SaveFile(string destinyDirectory)
         {
@@ -209,6 +211,8 @@ namespace ExcelMerge.Forms
 
                     for (int indexRow = GetInitialIndex(indexFile); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
                     {
+                        RefreshCurrentRow(lblProcessedRows, indexRow);
+
                         if (CancellationPending(_eventDoWork))
                             return string.Empty;
 
@@ -279,6 +283,11 @@ namespace ExcelMerge.Forms
 
             Thread.Sleep(1);
         }
+
+        private void RefreshCurrentRow(Label label, int indexRow) => label.BeginInvoke(new Action(() => 
+        {
+            label.Text = string.Format(_textLabelCurrentProgress, indexRow + 1);
+        }));
 
         /// <summary>
         /// Here we call our methods with the time-consuming tasks.
