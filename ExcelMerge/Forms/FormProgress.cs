@@ -267,21 +267,6 @@ namespace ExcelMerge.Forms
             }
         }
 
-        private bool AddNewRow(IXLRow row)
-        {
-            int columnReturnFileCount = 1;
-            for (int indexCell = 0; indexCell < row.RowUsed().CellCount(); indexCell++) // Loop in cells
-            {
-                if (CancellationPending(_eventDoWork))
-                    return false;
-
-                _mainWorksheet.Cell(_rowReturnFileCount, columnReturnFileCount).Value = row.Cell(indexCell + 1).Value.ToString();
-
-                columnReturnFileCount += 1;
-            }
-
-            return true;
-        }
 
         private void SetMaximumProgressBar(ProgressBar prog, int maximum)
         {
@@ -298,11 +283,6 @@ namespace ExcelMerge.Forms
 
             Thread.Sleep(1);
         }
-
-        private void RefreshCurrentRow(Label label, int indexRow) => label.BeginInvoke(new Action(() => 
-        {
-            label.Text = string.Format(_textLabelCurrentProgress, indexRow + 1);
-        }));
 
         /// <summary>
         /// Here we call our methods with the time-consuming tasks.
