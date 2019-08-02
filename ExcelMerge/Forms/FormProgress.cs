@@ -195,48 +195,62 @@ namespace ExcelMerge.Forms
                             if (CancellationPending(_eventDoWork))
                                 return string.Empty;
 
-                            var sheet = workBookFile.Worksheets.Worksheet(indexSheet + 1);
+                            var workSheet = workBookFile.Worksheets.Worksheet(indexSheet + 1);
 
-                            UpdateLogReadSheet(sheet.Name, false);
-                            UpdateProgress(indexSheet, sheet.Name);
+                            UpdateLogReadSheet(workSheet.Name, false);
+                            UpdateProgress(indexSheet, workSheet.Name);
 
-                            for (int indexRow = GetInitialIndex(); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
-                            {
-                                RefreshCurrentRow(lblProcessedRows, indexRow);
+                            // Define a range with the data
+                            var firstTableCell = workSheet.FirstCellUsed();
+                            var lastTableCell = workSheet.LastCellUsed();
+                            var rangData = workSheet.Range(firstTableCell.Address, lastTableCell.Address);
 
-                                if (CancellationPending(_eventDoWork))
-                                    return string.Empty;
+                            var mainFirstTableCell = _mainWorksheet.FirstCellUsed();
+                            var mainLastTableCell = _mainWorksheet.LastCellUsed();
 
-                                var row = GetRow(sheet.Row(indexRow + 1), _fileMerge[_indexFile].SeparatorCSV);
+                            var mainRowCount = mainFirstTableCell == null || mainLastTableCell == null 
+                                ? 1
+                                : _mainWorksheet.Range(mainFirstTableCell.Address, mainLastTableCell.Address).RowCount() + 1;
 
-                                switch (_selectedHeaderAction)
-                                {
-                                    case HeaderActionEnum.ConsiderFirstFile:
-                                        if ((_indexFile == 0 && indexSheet == 0 && indexRow == GetInitialIndex()) || (indexRow != GetInitialIndex()))
-                                        {
-                                            if (!AddNewRow(row))
-                                                return string.Empty;
+                            _mainWorksheet.Cell(mainRowCount, 1).Value = rangData;
 
-                                            SetIncrementRowFileCount();
-                                        }
-                                        break;
-                                    case HeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
-                                        if (indexRow == GetInitialIndex())
-                                            continue;
+                            //for (int indexRow = GetInitialIndex(); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
+                            //{
+                            //    RefreshCurrentRow(lblProcessedRows, indexRow);
 
-                                        if (!AddNewRow(row))
-                                            return string.Empty;
+                            //    if (CancellationPending(_eventDoWork))
+                            //        return string.Empty;
 
-                                        SetIncrementRowFileCount();
-                                        break;
-                                    case HeaderActionEnum.None:
-                                        if (!AddNewRow(row))
-                                            return string.Empty;
+                            //    var row = GetRow(sheet.Row(indexRow + 1), _fileMerge[_indexFile].SeparatorCSV);
 
-                                        SetIncrementRowFileCount();
-                                        break;
-                                }
-                            }
+                            //    switch (_selectedHeaderAction)
+                            //    {
+                            //        case HeaderActionEnum.ConsiderFirstFile:
+                            //            if ((_indexFile == 0 && indexSheet == 0 && indexRow == GetInitialIndex()) || (indexRow != GetInitialIndex()))
+                            //            {
+                            //                if (!AddNewRow(row))
+                            //                    return string.Empty;
+
+                            //                SetIncrementRowFileCount();
+                            //            }
+                            //            break;
+                            //        case HeaderActionEnum.IgnoreAll: // * Ignore all headers!!!
+                            //            if (indexRow == GetInitialIndex())
+                            //                continue;
+
+                            //            if (!AddNewRow(row))
+                            //                return string.Empty;
+
+                            //            SetIncrementRowFileCount();
+                            //            break;
+                            //        case HeaderActionEnum.None:
+                            //            if (!AddNewRow(row))
+                            //                return string.Empty;
+
+                            //            SetIncrementRowFileCount();
+                            //            break;
+                            //    }
+                            //}
                         }
                     }
                 }
