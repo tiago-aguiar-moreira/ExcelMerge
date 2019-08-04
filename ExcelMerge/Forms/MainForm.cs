@@ -6,7 +6,6 @@ using ExcelMerge.Utils;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace ExcelMerge
     public partial class MainForm : Form
     {
         private string _directoryApp;
-        private BindingList<FileMerge> _listFiles;
+        private BindingList<FileMergeModel> _listFiles;
         private ListChangedType[] _listEvents;
         private AppConfigModel _appConfig;
 
@@ -27,7 +26,7 @@ namespace ExcelMerge
             this.SetBaseConfigs();
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
-            _listFiles = new BindingList<FileMerge>();
+            _listFiles = new BindingList<FileMergeModel>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
             _appConfig = AppConfigManager.Load();
             _listEvents = new ListChangedType[]
@@ -89,7 +88,7 @@ namespace ExcelMerge
                     {
                         if (!_listFiles.Any(a => a.GetPath().ToLower() == item.ToLower()))
                         {
-                            _listFiles.Add(new FileMerge(item));
+                            _listFiles.Add(new FileMergeModel(item));
                         }
                     }
 

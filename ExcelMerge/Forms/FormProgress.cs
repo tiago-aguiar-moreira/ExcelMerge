@@ -1,12 +1,11 @@
 ﻿using ClosedXML.Excel;
 using ExcelMerge.Enumerator;
+using ExcelMerge.Model;
 using ExcelMerge.Utils;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -14,12 +13,10 @@ namespace ExcelMerge.Forms
 {
     public partial class FormProgress : Form
     {
-        private const string _textLabelCurrentProgress = "Linhas processadas: {0}";
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
-        private int _rowReturnFileCount;
         private int _indexFile;
         private readonly string _destinyDirectory;
-        private readonly FileMerge[] _fileMerge;
+        private readonly FileMergeModel[] _fileMerge;
         private readonly HeaderActionEnum _selectedHeaderAction;
         private IXLWorksheet _mainWorksheet;
         private MergeProgessFiles[] _progressFile;
@@ -27,7 +24,7 @@ namespace ExcelMerge.Forms
 
         public string NewFile { get; private set; }
 
-        public FormProgress(FileMerge[] fileMerge, string destinyDirectory, HeaderActionEnum selectedHeaderActionEnum)
+        public FormProgress(FileMergeModel[] fileMerge, string destinyDirectory, HeaderActionEnum selectedHeaderActionEnum)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -35,7 +32,6 @@ namespace ExcelMerge.Forms
             _fileMerge = fileMerge;
             _destinyDirectory = destinyDirectory;
             _selectedHeaderAction = selectedHeaderActionEnum;
-            _rowReturnFileCount = 1;
 
             richTxt.Clear();
             progBarFile.Value = 0;
@@ -47,13 +43,13 @@ namespace ExcelMerge.Forms
         private string NewFileName(string destinyDirectory)
             => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
 
-        private void SetTotals(FileMerge[] file)
+        private void SetTotals()
         {
-            _progressFile = new MergeProgessFiles[file.Length];
+            _progressFile = new MergeProgessFiles[_fileMerge.Length];
 
             for (int index = 0; index < _progressFile.Length; index++) // Loop in files
             {
-                using (var workBook = new XLWorkbook(file[index].GetPath())) // Get sheets from file
+                using (var workBook = new XLWorkbook(_fileMerge[index].GetPath())) // Get sheets from file
 
                 _progressFile[index] = new MergeProgessFiles(workBook.Worksheets.Count);
             }
@@ -139,33 +135,33 @@ namespace ExcelMerge.Forms
             }));
         }
 
-        private IXLRow GetRow(IXLRow row, string separator)
-        {
-            var valueRow = row.Cell(1).Value.ToString();
+        //private IXLRow GetRow(IXLRow row, string separator)
+        //{
+        //    var valueRow = row.Cell(1).Value.ToString();
 
-            if (!string.IsNullOrEmpty(separator))
-            {
-                var values = valueRow.Split(separator.ToArray());
+        //    if (!string.IsNullOrEmpty(separator))
+        //    {
+        //        var values = valueRow.Split(separator.ToArray());
 
-                row.Clear();
-                for (int cellNumber = 0; cellNumber < values.Length; cellNumber++)
-                {
-                    row.Cell(cellNumber + 1).Value = values[cellNumber];
-                }
-            }
+        //        row.Clear();
+        //        for (int cellNumber = 0; cellNumber < values.Length; cellNumber++)
+        //        {
+        //            row.Cell(cellNumber + 1).Value = values[cellNumber];
+        //        }
+        //    }
 
-            return row;
-        }
+        //    return row;
+        //}
 
         private int GetInitialIndex() => _fileMerge[_indexFile].HeaderLength - 1;
 
-        private void SetIncrementRowFileCount() => _rowReturnFileCount += 1;
+        //private void SetIncrementRowFileCount() => _rowReturnFileCount += 1;
 
         public int GetTotalSheets() => _progressFile[_indexFile].Sheet.Total;
 
         public string Execute()
         {
-            SetTotals(_fileMerge);
+            SetTotals();
 
             if (_progressFile.Length <= 0)
                 return string.Empty;
@@ -346,44 +342,7 @@ namespace ExcelMerge.Forms
             btnCancelar.Enabled = false;
         }
 
-        private void FormProgress_FormClosing(object sender, FormClosingEventArgs e) => btnCancelar_Click(sender, e);
-    }
-
-    public class FileMerge
-    {
-        private string _fileName;
-        private string _directory;
-        public string FileName
-        {
-            get
-            {
-                return _fileName;
-            }
-            set
-            {
-                _fileName = Path.GetFileName(value);
-            }
-        }
-        public string Directory
-        {
-            get
-            {
-                return _directory;
-            }
-            set
-            {
-                _directory = Path.GetDirectoryName(value);
-            }
-        }
-        public byte HeaderLength { get; set; }
-        public string SeparatorCSV { get; set; }
-
-        public FileMerge(string path)
-        {
-            FileName = path;
-            Directory = path;
-        }
-
-        public string GetPath() => $"{_directory}\\{_fileName}";
+        private void FormProgress_FormClosing(object sender, FormClosingEventArgs e)
+            => btnCancelar_Click(sender, e);
     }
 }
