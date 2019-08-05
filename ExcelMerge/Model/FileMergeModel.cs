@@ -1,5 +1,4 @@
-﻿using ClosedXML.Excel;
-using System.IO;
+﻿using System.IO;
 
 namespace ExcelMerge.Model
 {
@@ -31,11 +30,13 @@ namespace ExcelMerge.Model
         }
         public byte HeaderLength { get; set; }
         public string SeparatorCSV { get; set; }
+
         public FileMergeModel(string path)
         {
             FileName = path;
             Directory = path;
         }
+
         public string GetPath() => $"{_directory}\\{_fileName}";
     }
 }

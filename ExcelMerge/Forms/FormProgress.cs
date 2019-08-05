@@ -14,12 +14,12 @@ namespace ExcelMerge.Forms
     public partial class FormProgress : Form
     {
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
+        private int _indexFile;
         private readonly string _destinyDirectory;
         private readonly FileMergeModel[] _fileMerge;
         private readonly HeaderActionEnum _selectedHeaderAction;
-        private int _indexFile;
         private IXLWorksheet _mainWorksheet;
-        private MergeProgessFilesModel[] _progressFile;
+        private MergeProgessFiles[] _progressFile;
         private DoWorkEventArgs _eventDoWork;
 
         public string NewFile { get; private set; }
@@ -45,14 +45,13 @@ namespace ExcelMerge.Forms
 
         private void SetTotals()
         {
-            _progressFile = new MergeProgessFilesModel[_fileMerge.Length];
+            _progressFile = new MergeProgessFiles[_fileMerge.Length];
 
             for (int index = 0; index < _progressFile.Length; index++) // Loop in files
             {
-                using (var workBook = new XLWorkbook(_fileMerge[index].GetPath(), XLEventTracking.Disabled)) // Get sheets from file
-                {
-                    _progressFile[index] = new MergeProgessFilesModel(workBook.Worksheets.Count);
-                }
+                using (var workBook = new XLWorkbook(_fileMerge[index].GetPath())) // Get sheets from file
+
+                _progressFile[index] = new MergeProgessFiles(workBook.Worksheets.Count);
             }
         }
 
@@ -136,31 +135,27 @@ namespace ExcelMerge.Forms
             }));
         }
 
-        //private bool GetHeader()
+        //private IXLRow GetRow(IXLRow row, string separator)
         //{
-        //    switch (_selectedHeaderAction)
+        //    var valueRow = row.Cell(1).Value.ToString();
+
+        //    if (!string.IsNullOrEmpty(separator))
         //    {
-        //        case HeaderActionEnum.None:
-        //            break;
-        //        case HeaderActionEnum.ConsiderFirstFile:
-        //            break;
-        //        case HeaderActionEnum.IgnoreAll:
-        //            break;
-        //        default:
-        //            break;
+        //        var values = valueRow.Split(separator.ToArray());
+
+        //        row.Clear();
+        //        for (int cellNumber = 0; cellNumber < values.Length; cellNumber++)
+        //        {
+        //            row.Cell(cellNumber + 1).Value = values[cellNumber];
+        //        }
         //    }
+
+        //    return row;
         //}
 
-        private bool GetRangeDataFrom(IXLWorksheet workSheet, out IXLRange range)
-        {
-            var numberRow = _fileMerge[_indexFile].HeaderLength;
-            var initialCell = workSheet.Cell($"A{(numberRow == 0 ? 1 : numberRow)}").Address;
-            var finalCell = workSheet.LastCellUsed().Address;
+        private int GetInitialIndex() => _fileMerge[_indexFile].HeaderLength - 1;
 
-            range = workSheet.Range(initialCell, finalCell);
-
-            return workSheet.RangeUsed().RowCount() >= numberRow;
-        }
+        //private void SetIncrementRowFileCount() => _rowReturnFileCount += 1;
 
         public int GetTotalSheets() => _progressFile[_indexFile].Sheet.Total;
 
@@ -201,6 +196,11 @@ namespace ExcelMerge.Forms
                             UpdateLogReadSheet(workSheet.Name, false);
                             UpdateProgress(indexSheet, workSheet.Name);
 
+                            // Define a range with the data
+                            var firstTableCell = workSheet.FirstCellUsed();
+                            var lastTableCell = workSheet.LastCellUsed();
+                            var rangData = workSheet.Range(firstTableCell.Address, lastTableCell.Address);
+
                             var mainFirstTableCell = _mainWorksheet.FirstCellUsed();
                             var mainLastTableCell = _mainWorksheet.LastCellUsed();
 
@@ -208,9 +208,7 @@ namespace ExcelMerge.Forms
                                 ? 1
                                 : _mainWorksheet.Range(mainFirstTableCell.Address, mainLastTableCell.Address).RowCount() + 1;
 
-                            IXLRange ragenUsed;
-                            if (GetRangeDataFrom(workSheet, out ragenUsed))
-                                _mainWorksheet.Cell($"A{mainRowCount}").Value = ragenUsed;
+                            _mainWorksheet.Cell(mainRowCount, 1).Value = rangData;
 
                             //for (int indexRow = GetInitialIndex(); indexRow < sheet.RowsUsed().Count(); indexRow++) // Loop in rows
                             //{
@@ -258,8 +256,7 @@ namespace ExcelMerge.Forms
                 backWorker.ReportProgress(100);
 
                 var newFileName = NewFileName(_destinyDirectory);
-                mainWorkbook.SaveAs(newFileName);
-                mainWorkbook.Dispose();
+                mainWorkbook.SaveAs(newFileName);                
                 return newFileName;
 
                 #endregion
