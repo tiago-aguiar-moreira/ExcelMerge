@@ -19,7 +19,6 @@ namespace ExcelMerge.Forms
         private readonly HeaderActionEnum _selectedHeaderAction;
         private int _indexFile;
         private IXLWorksheet _mainWorksheet;
-        private MergeProgessFilesModel[] _progressFile;
         private DoWorkEventArgs _eventDoWork;
 
         public string NewFile { get; private set; }
@@ -35,26 +34,12 @@ namespace ExcelMerge.Forms
 
             richTxt.Clear();
             progBarFile.Value = 0;
-            progBarSheet.Value = 0;
 
             backWorker.RunWorkerAsync(); //executes the process asynchronously
         }
 
         private string NewFileName(string destinyDirectory)
             => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
-
-        private void SetTotals()
-        {
-            _progressFile = new MergeProgessFilesModel[_fileMerge.Length];
-
-            for (int index = 0; index < _progressFile.Length; index++) // Loop in files
-            {
-                using (var workBook = new XLWorkbook(_fileMerge[index].GetPath(), XLEventTracking.Disabled)) // Get sheets from file
-                {
-                    _progressFile[index] = new MergeProgessFilesModel(workBook.Worksheets.Count);
-                }
-            }
-        }
 
         private bool CancellationPending(DoWorkEventArgs e)
         {
@@ -73,28 +58,14 @@ namespace ExcelMerge.Forms
 
         private void UpdateProgressFile()
         {
-            var files = _progressFile[_indexFile];
+            lblFile.BeginInvoke(new Action(() => 
+            {
+                lblFile.Text = $"Arquivo {progBarFile.Value} de {progBarFile.Maximum} ({_fileMerge[_indexFile].FileName})";
+            }));
 
-            files.Progress = _indexFile + 1;
+            progBarFile.BeginInvoke(new Action(() => { progBarFile.Value += _indexFile + 1; }));
 
-            RefreshLabelAndProgressBar(
-                lblFile,
-                progBarFile,
-                files.Progress,
-                $"Arquivo {files.Progress} de {progBarFile.Maximum} ({_fileMerge[_indexFile].FileName})");
-        }
-
-        private void UpdateProgress(int progress, string name)
-        {
-            var sheets = _progressFile[_indexFile].Sheet;
-
-            sheets.Progress = progress + 1;
-
-            RefreshLabelAndProgressBar(
-                lblSheet,
-                progBarSheet,
-                sheets.Progress,
-                $"Planilha {sheets.Progress} de {progBarSheet.Maximum} ({name})");
+            Thread.Sleep(1);
         }
         
         private void UpdateLogReadFile()
@@ -162,22 +133,18 @@ namespace ExcelMerge.Forms
             return workSheet.RangeUsed().RowCount() >= numberRow;
         }
 
-        public int GetTotalSheets() => _progressFile[_indexFile].Sheet.Total;
-
         public string Execute()
         {
-            SetTotals();
-
-            if (_progressFile.Length <= 0)
+            if (_fileMerge.Length <= 0)
                 return string.Empty;
 
-            SetMaximumProgressBar(progBarFile, _progressFile.Length);
+            SetMaximumProgressBar();
 
             using (var mainWorkbook = new XLWorkbook(XLEventTracking.Disabled))
             {
                 _mainWorksheet = mainWorkbook.Worksheets.Add("Main");
 
-                for (_indexFile = 0; _indexFile < _progressFile.Length; _indexFile++) // Loop in files
+                for (_indexFile = 0; _indexFile < _fileMerge.Length; _indexFile++) // Loop in files
                 {
                     using (var workBookFile = new XLWorkbook(_fileMerge[_indexFile].GetPath(), XLEventTracking.Disabled))
                     {
@@ -189,9 +156,7 @@ namespace ExcelMerge.Forms
                         UpdateLogReadFile();
                         UpdateProgressFile();
 
-                        SetMaximumProgressBar(progBarSheet, GetTotalSheets());
-
-                        for (int indexSheet = 0; indexSheet < GetTotalSheets(); indexSheet++) // Loop in sheets
+                        for (int indexSheet = 0; indexSheet < mainWorkbook.Worksheets.Count; indexSheet++) // Loop in sheets
                         {
                             if (CancellationPending(_eventDoWork))
                                 return string.Empty;
@@ -199,8 +164,8 @@ namespace ExcelMerge.Forms
                             var workSheet = workBookFile.Worksheets.Worksheet(indexSheet + 1);
 
                             UpdateLogReadSheet(workSheet.Name, false);
-                            UpdateProgress(indexSheet, workSheet.Name);
 
+                            // Encapsular (204 a 210) em um método cujo retorno será passado por parâmetrono método cell (210)
                             var mainFirstTableCell = _mainWorksheet.FirstCellUsed();
                             var mainLastTableCell = _mainWorksheet.LastCellUsed();
 
@@ -267,18 +232,12 @@ namespace ExcelMerge.Forms
         }
 
 
-        private void SetMaximumProgressBar(ProgressBar prog, int maximum)
+        private void SetMaximumProgressBar()
         {
-            prog.BeginInvoke(new Action(() => { prog.Maximum = maximum; }));
-
-            Thread.Sleep(1);
-        }
-
-        private void RefreshLabelAndProgressBar(Label label, ProgressBar prog, int progress, string textLabel)
-        {
-            label.BeginInvoke(new Action(() => { label.Text = textLabel; }));
-
-            prog.BeginInvoke(new Action(() => { prog.Value = progress; }));
+            progBarFile.BeginInvoke(new Action(() => 
+            {
+                progBarFile.Maximum = _fileMerge.Length;
+            }));
 
             Thread.Sleep(1);
         }
