@@ -89,12 +89,12 @@
     <Compile Include="Forms\FormProgress.Designer.cs">
       <DependentUpon>FormProgress.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\FileMergeModel.cs" />
     <Compile Include="Utils\EnumUtils.cs" />
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Utils\JSONUtils.cs" />
     <Compile Include="Model\AppConfigModel.cs" />
     <Compile Include="Configuration\AppConfigurationManager.cs" />
-    <Compile Include="MergeProgress.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
