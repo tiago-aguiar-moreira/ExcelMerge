@@ -3,11 +3,15 @@ using ExcelMerge.Enumerator;
 using ExcelMerge.Model;
 using ExcelMerge.Utils;
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
+using System.Data;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ExcelMerge.Forms
 {
@@ -59,12 +63,12 @@ namespace ExcelMerge.Forms
 
         private void UpdateProgressFile()
         {
+            progBarFile.BeginInvoke(new Action(() => { progBarFile.Value += +1; }));
+
             lblFile.BeginInvoke(new Action(() =>
             {
                 lblFile.Text = $"Arquivo {progBarFile.Value} de {progBarFile.Maximum} ({_fileMerge[_indexFile].FileName})";
             }));
-
-            progBarFile.BeginInvoke(new Action(() => { progBarFile.Value += _indexFile + 1; }));
 
             Thread.Sleep(1);
         }
@@ -108,39 +112,34 @@ namespace ExcelMerge.Forms
             }));
         }
 
-        private bool GetInitialHeader(IXLWorksheet worksheet, out IXLAddress adress)
+        private bool LoadFromWorksheet(IXLWorksheet worksheet, out IList<string[]> list)
         {
-            var numberRow = _fileMerge[_indexFile].HeaderLength;
-
-            switch (_selectedHeaderAction)
+            list = new List<string[]>();
+            if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
             {
-                case HeaderActionEnum.None:
-                    adress = worksheet.Cell("A1").Address;
-                    return true;
-                case HeaderActionEnum.ConsiderFirstFile:
-                    if (_copiedOnlyFirstHeader)
-                    {
-                        adress = worksheet.Cell($"A{(numberRow == 0 ? 1 : numberRow)}").Address;
-                        return true;
-                    }
-                    else
-                    {
-                        adress = _indexFile == 0 && _indexSheet == 0
-                            ? worksheet.Cell($"A{(numberRow == 0 ? 1 : numberRow)}").Address
-                            : null;
+                //var teste = ragenUsed.RowsUsed()
+                //    .Select(s => s.Cell(1).Value.ToString().Split(','))
+                //    .ToList();
 
-                        return adress != null;
-                    }
-                case HeaderActionEnum.IgnoreAll:
-                    adress = worksheet.Cell($"A{numberRow + 1}").Address;
-                    return true;
-                default:
-                    adress = worksheet.Cell("A1").Address;
-                    return true;
+                //list.Add(teste);
+
+                foreach (var row in ragenUsed.RowsUsed())
+                {
+                    var cell = row.Cell(1);
+
+                    var values = cell.Value.ToString().Split(',');
+
+                    list.Add(values);
+                }
+                //range = range.Rows(r => !string.IsNullOrEmpty(r.Cell(1).GetString()))
+
+                return true;
             }
+            
+            return false;
         }
 
-        private bool GetRangeDataFrom(IXLWorksheet worksheet, out IXLRange range)
+        private bool LoadFromWorksheet(IXLWorksheet worksheet, out IXLRange range)
         {
             var numberRow = _fileMerge[_indexFile].HeaderLength + (_fileMerge[_indexFile].HeaderLength == 0 ? 1 : 0);
             var finalCell = worksheet.LastCellUsed().Address;
@@ -172,7 +171,7 @@ namespace ExcelMerge.Forms
             }
 
             range = worksheet.Range(worksheet.Cell(cellAdressInitial).Address, finalCell);
-
+                        
             return worksheet.RangeUsed().RowCount() >= numberRow;
         }
 
@@ -208,20 +207,16 @@ namespace ExcelMerge.Forms
 
                             UpdateLogReadSheet(worksheet.Name, false);
 
-                            #region Encapsular
-
-                            var mainFirstTableCell = mainWorksheet.FirstCellUsed();
-                            var mainLastTableCell = mainWorksheet.LastCellUsed();
-
-                            #endregion
-
-                            var mainRowCount = mainFirstTableCell == null || mainLastTableCell == null
-                                ? 1
-                                : mainWorksheet.Range(mainFirstTableCell.Address, mainLastTableCell.Address).RowCount() + 1;
-
-                            IXLRange ragenUsed;
-                            if (GetRangeDataFrom(worksheet, out ragenUsed))
-                                mainWorksheet.Cell($"A{mainRowCount}").Value = ragenUsed;
+                            if (string.IsNullOrEmpty(_fileMerge[_indexFile].SeparatorCSV))
+                            {
+                                if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
+                                    mainWorksheet.Cell($"A{GetRowCount(mainWorksheet)}").Value = ragenUsed;
+                            }
+                            else
+                            {
+                                if (LoadFromWorksheet(worksheet, out IList<string[]> list))
+                                    mainWorksheet.Cell($"A{GetRowCount(mainWorksheet)}").Value = list;
+                            }
                         }
                     }
                 }
@@ -231,12 +226,22 @@ namespace ExcelMerge.Forms
                 backWorker.ReportProgress(100);
 
                 var newFileName = NewFileName(_destinyDirectory);
+                mainWorkbook.Worksheet(1).Columns().AdjustToContents();
                 mainWorkbook.SaveAs(newFileName);
-                mainWorkbook.Dispose();
                 return newFileName;
 
                 #endregion
             }
+        }
+
+        private int GetRowCount(IXLWorksheet worksheet)
+        {
+            var mainFirstTableCell = worksheet.FirstCellUsed();
+            var mainLastTableCell = worksheet.LastCellUsed();
+
+            return mainFirstTableCell == null || mainLastTableCell == null
+                ? 1
+                : worksheet.Range(mainFirstTableCell.Address, mainLastTableCell.Address).RowCount() + 1;
         }
 
         private void SetMaximumProgressBar()

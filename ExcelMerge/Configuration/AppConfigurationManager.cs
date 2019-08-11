@@ -9,11 +9,14 @@ namespace ExcelMerge.Configuration
     {
         private const string ConfigExtension = ".exe.config.json";
 
-        private static string GetDirectoryNameFromExecutable() => Path.GetDirectoryName(Application.ExecutablePath);
+        private static string GetDirectoryNameFromExecutable() 
+            => Path.GetDirectoryName(Application.ExecutablePath);
 
-        private static string GetNameConfig() => Path.GetFileNameWithoutExtension(Application.ExecutablePath);
+        private static string GetNameConfig() 
+            => Path.GetFileNameWithoutExtension(Application.ExecutablePath);
 
-        private static string GetPathAppConfig() => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
+        private static string GetPathAppConfig() 
+            => $"{GetDirectoryNameFromExecutable()}\\{GetNameConfig()}{ConfigExtension}";
 
         private static void CreateDefaultConfig()
         {
@@ -30,6 +33,7 @@ namespace ExcelMerge.Configuration
             return JSONUtils.LoadFromFile<AppConfigModel>(GetPathAppConfig());
         }
 
-        public static void Save(AppConfigModel appConfig) => JSONUtils.SaveToFile(appConfig, GetPathAppConfig());
+        public static void Save(AppConfigModel appConfig)
+            => JSONUtils.SaveToFile(appConfig, GetPathAppConfig());
     }
 }
