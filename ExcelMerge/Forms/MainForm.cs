@@ -39,7 +39,7 @@ namespace ExcelMerge
             gridVwFiles.DataSource = _listFiles;
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
             txtHeaderLength.Value = _appConfig.HeaderLength;
-            txtSeparatorCSV.Text = _appConfig.SeparadorCSV;
+            txtSeparatorCSV.Text = _appConfig.SeparadorCSV == null ? string.Empty : _appConfig.SeparadorCSV.ToString();
             LoadEndProcessoAction(_appConfig.EndProcessAction);
             LoadHeaderAction(_appConfig.HeaderAction);
             pnlSettings.Visible = _appConfig.ShowConfigs;
@@ -130,8 +130,8 @@ namespace ExcelMerge
                     if (file.HeaderLength <= 0)
                         file.HeaderLength = byte.Parse(txtHeaderLength.Value.ToString());
 
-                    if (string.IsNullOrEmpty(file.SeparatorCSV))
-                        file.SeparatorCSV = txtSeparatorCSV.Text;
+                    if (file.SeparatorCSV == null)
+                        file.SeparatorCSV = txtSeparatorCSV.Text[0];
                 }
 
                 var frmProgress = new FormProgress(
@@ -266,7 +266,12 @@ namespace ExcelMerge
         private void SaveApp_Validating(object sender, CancelEventArgs e) 
             => AppConfigManager.Save(_appConfig);
 
-        private void TxtSeparatorCSV_TextChanged(object sender, EventArgs e) 
-            => _appConfig.SeparadorCSV = (sender as TextBox).Text;
+        private void TxtSeparatorCSV_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty((sender as TextBox).Text))
+                _appConfig.SeparadorCSV = null;
+            else
+                _appConfig.SeparadorCSV = (sender as TextBox).Text[0];
+        }
     }
 }

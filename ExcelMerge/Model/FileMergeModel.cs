@@ -30,7 +30,7 @@ namespace ExcelMerge.Model
             }
         }
         public byte HeaderLength { get; set; }
-        public string SeparatorCSV { get; set; }
+        public char? SeparatorCSV { get; set; }
         public FileMergeModel(string path)
         {
             FileName = path;

@@ -112,26 +112,19 @@ namespace ExcelMerge.Forms
             }));
         }
 
-        private bool LoadFromWorksheet(IXLWorksheet worksheet, out IList<string[]> list)
+        private bool LoadFromWorksheet(IXLWorksheet worksheet, out IList<string[]> list, char separatorCSV)
         {
             list = new List<string[]>();
             if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
             {
-                //var teste = ragenUsed.RowsUsed()
-                //    .Select(s => s.Cell(1).Value.ToString().Split(','))
-                //    .ToList();
+                var values = ragenUsed.RowsUsed()
+                    .Select(s => s.Cell(1).Value.ToString().Split(','))
+                    .ToList();
 
-                //list.Add(teste);
-
-                foreach (var row in ragenUsed.RowsUsed())
+                foreach (var value in values)
                 {
-                    var cell = row.Cell(1);
-
-                    var values = cell.Value.ToString().Split(',');
-
-                    list.Add(values);
+                    list.Add(value);
                 }
-                //range = range.Rows(r => !string.IsNullOrEmpty(r.Cell(1).GetString()))
 
                 return true;
             }
@@ -207,14 +200,14 @@ namespace ExcelMerge.Forms
 
                             UpdateLogReadSheet(worksheet.Name, false);
 
-                            if (string.IsNullOrEmpty(_fileMerge[_indexFile].SeparatorCSV))
+                            if (_fileMerge[_indexFile].SeparatorCSV == null)
                             {
                                 if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
                                     mainWorksheet.Cell($"A{GetRowCount(mainWorksheet)}").Value = ragenUsed;
                             }
                             else
                             {
-                                if (LoadFromWorksheet(worksheet, out IList<string[]> list))
+                                if (LoadFromWorksheet(worksheet, out IList<string[]> list, (char)_fileMerge[_indexFile].SeparatorCSV))
                                     mainWorksheet.Cell($"A{GetRowCount(mainWorksheet)}").Value = list;
                             }
                         }

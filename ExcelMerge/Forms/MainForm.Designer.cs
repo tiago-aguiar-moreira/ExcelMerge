@@ -220,7 +220,7 @@
             this.groupBox2.Controls.Add(this.txtSeparatorCSV);
             this.groupBox2.Location = new System.Drawing.Point(425, 64);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(124, 89);
+            this.groupBox2.Size = new System.Drawing.Size(96, 89);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = " CSV ";
@@ -239,8 +239,9 @@
             this.txtSeparatorCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeparatorCSV.Location = new System.Drawing.Point(6, 48);
+            this.txtSeparatorCSV.MaxLength = 1;
             this.txtSeparatorCSV.Name = "txtSeparatorCSV";
-            this.txtSeparatorCSV.Size = new System.Drawing.Size(112, 26);
+            this.txtSeparatorCSV.Size = new System.Drawing.Size(84, 26);
             this.txtSeparatorCSV.TabIndex = 1;
             this.txtSeparatorCSV.TextChanged += new System.EventHandler(this.TxtSeparatorCSV_TextChanged);
             this.txtSeparatorCSV.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
@@ -356,7 +357,7 @@
             // lblAction
             // 
             this.lblAction.AutoSize = true;
-            this.lblAction.Location = new System.Drawing.Point(556, 86);
+            this.lblAction.Location = new System.Drawing.Point(528, 85);
             this.lblAction.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAction.Name = "lblAction";
             this.lblAction.Size = new System.Drawing.Size(190, 20);
@@ -367,7 +368,7 @@
             // 
             this.cbxAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxAction.FormattingEnabled = true;
-            this.cbxAction.Location = new System.Drawing.Point(556, 111);
+            this.cbxAction.Location = new System.Drawing.Point(528, 110);
             this.cbxAction.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxAction.Name = "cbxAction";
             this.cbxAction.Size = new System.Drawing.Size(294, 28);
