@@ -38,6 +38,10 @@
             this.btnRun = new System.Windows.Forms.Button();
             this.pnlFiles = new System.Windows.Forms.Panel();
             this.gridVwFiles = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pnlSettings = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblSeparador = new System.Windows.Forms.Label();
@@ -53,10 +57,6 @@
             this.lblDefaultDirectorySaveFiles = new System.Windows.Forms.Label();
             this.lblAction = new System.Windows.Forms.Label();
             this.cbxAction = new System.Windows.Forms.ComboBox();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.pnlFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).BeginInit();
@@ -169,6 +169,35 @@
             this.gridVwFiles.Size = new System.Drawing.Size(949, 366);
             this.gridVwFiles.TabIndex = 1;
             // 
+            // Column1
+            // 
+            this.Column1.DataPropertyName = "HeaderLength";
+            this.Column1.HeaderText = "Linha Inicial do Cabeçalho";
+            this.Column1.Name = "Column1";
+            this.Column1.Width = 130;
+            // 
+            // Column2
+            // 
+            this.Column2.DataPropertyName = "SeparatorCSV";
+            this.Column2.HeaderText = "Separador CSV";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 150;
+            // 
+            // Column3
+            // 
+            this.Column3.DataPropertyName = "FileName";
+            this.Column3.HeaderText = "Arquivo";
+            this.Column3.Name = "Column3";
+            this.Column3.ReadOnly = true;
+            this.Column3.Width = 250;
+            // 
+            // Column4
+            // 
+            this.Column4.DataPropertyName = "Directory";
+            this.Column4.HeaderText = "Diretório";
+            this.Column4.Name = "Column4";
+            this.Column4.Width = 580;
+            // 
             // pnlSettings
             // 
             this.pnlSettings.BackColor = System.Drawing.SystemColors.Control;
@@ -191,7 +220,7 @@
             this.groupBox2.Controls.Add(this.txtSeparatorCSV);
             this.groupBox2.Location = new System.Drawing.Point(425, 64);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(124, 89);
+            this.groupBox2.Size = new System.Drawing.Size(96, 89);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = " CSV ";
@@ -210,9 +239,12 @@
             this.txtSeparatorCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeparatorCSV.Location = new System.Drawing.Point(6, 48);
+            this.txtSeparatorCSV.MaxLength = 1;
             this.txtSeparatorCSV.Name = "txtSeparatorCSV";
-            this.txtSeparatorCSV.Size = new System.Drawing.Size(112, 26);
+            this.txtSeparatorCSV.Size = new System.Drawing.Size(84, 26);
             this.txtSeparatorCSV.TabIndex = 1;
+            this.txtSeparatorCSV.TextChanged += new System.EventHandler(this.TxtSeparatorCSV_TextChanged);
+            this.txtSeparatorCSV.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // groupBox1
             // 
@@ -311,7 +343,7 @@
             this.txtDefaultDirectorySaveFiles.Size = new System.Drawing.Size(889, 26);
             this.txtDefaultDirectorySaveFiles.TabIndex = 1;
             this.txtDefaultDirectorySaveFiles.TextChanged += new System.EventHandler(this.TxtDefaultDirectorySaveFiles_TextChanged);
-            this.txtDefaultDirectorySaveFiles.Validating += new System.ComponentModel.CancelEventHandler(this.TxtDefaultDirectorySaveFiles_Validating);
+            this.txtDefaultDirectorySaveFiles.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // lblDefaultDirectorySaveFiles
             // 
@@ -325,7 +357,7 @@
             // lblAction
             // 
             this.lblAction.AutoSize = true;
-            this.lblAction.Location = new System.Drawing.Point(556, 86);
+            this.lblAction.Location = new System.Drawing.Point(528, 85);
             this.lblAction.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAction.Name = "lblAction";
             this.lblAction.Size = new System.Drawing.Size(190, 20);
@@ -336,42 +368,13 @@
             // 
             this.cbxAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxAction.FormattingEnabled = true;
-            this.cbxAction.Location = new System.Drawing.Point(556, 111);
+            this.cbxAction.Location = new System.Drawing.Point(528, 110);
             this.cbxAction.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxAction.Name = "cbxAction";
             this.cbxAction.Size = new System.Drawing.Size(294, 28);
             this.cbxAction.TabIndex = 6;
             this.cbxAction.SelectedIndexChanged += new System.EventHandler(this.cbxAction_SelectedIndexChanged);
             this.cbxAction.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
-            // 
-            // Column1
-            // 
-            this.Column1.DataPropertyName = "HeaderLength";
-            this.Column1.HeaderText = "Linha Inicial do Cabeçalho";
-            this.Column1.Name = "Column1";
-            this.Column1.Width = 130;
-            // 
-            // Column2
-            // 
-            this.Column2.DataPropertyName = "SeparatorCSV";
-            this.Column2.HeaderText = "Separador CSV";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 150;
-            // 
-            // Column3
-            // 
-            this.Column3.DataPropertyName = "FileName";
-            this.Column3.HeaderText = "Arquivo";
-            this.Column3.Name = "Column3";
-            this.Column3.ReadOnly = true;
-            this.Column3.Width = 250;
-            // 
-            // Column4
-            // 
-            this.Column4.DataPropertyName = "Directory";
-            this.Column4.HeaderText = "Diretório";
-            this.Column4.Name = "Column4";
-            this.Column4.Width = 580;
             // 
             // MainForm
             // 

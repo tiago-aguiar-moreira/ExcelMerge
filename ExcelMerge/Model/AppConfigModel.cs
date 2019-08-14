@@ -10,6 +10,7 @@ namespace ExcelMerge.Model
         public string RecentDirectorySaveFiles { get; set; }
         public byte HeaderLength { get; set; }
         public bool ShowConfigs { get; set; }
+        public char? SeparadorCSV { get; set; }
 
         public AppConfigModel()
         {
@@ -18,6 +19,7 @@ namespace ExcelMerge.Model
             DefaultDirectorySaveFiles = string.Empty;
             RecentDirectorySaveFiles = string.Empty;
             HeaderLength = 1;
+            SeparadorCSV = null;
         }
     }
 }

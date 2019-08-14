@@ -39,6 +39,7 @@ namespace ExcelMerge
             gridVwFiles.DataSource = _listFiles;
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
             txtHeaderLength.Value = _appConfig.HeaderLength;
+            txtSeparatorCSV.Text = _appConfig.SeparadorCSV == null ? string.Empty : _appConfig.SeparadorCSV.ToString();
             LoadEndProcessoAction(_appConfig.EndProcessAction);
             LoadHeaderAction(_appConfig.HeaderAction);
             pnlSettings.Visible = _appConfig.ShowConfigs;
@@ -111,7 +112,8 @@ namespace ExcelMerge
             }
         }
 
-        private void btnDeleteAll_Click(object sender, EventArgs e) => _listFiles.Clear();
+        private void btnDeleteAll_Click(object sender, EventArgs e) 
+            => _listFiles.Clear();
 
         private void btnRun_Click(object sender, EventArgs e)
         {
@@ -128,8 +130,8 @@ namespace ExcelMerge
                     if (file.HeaderLength <= 0)
                         file.HeaderLength = byte.Parse(txtHeaderLength.Value.ToString());
 
-                    if (string.IsNullOrEmpty(file.SeparatorCSV))
-                        file.SeparatorCSV = txtSeparatorCSV.Text;
+                    if (file.SeparatorCSV == null)
+                        file.SeparatorCSV = txtSeparatorCSV.Text[0];
                 }
 
                 var frmProgress = new FormProgress(
@@ -208,8 +210,8 @@ namespace ExcelMerge
             pnlSettings.Visible = _appConfig.ShowConfigs;
         }
 
-        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) =>
-            _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
+        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) 
+            => _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
 
         private void BtnBrowserFolder_Click(object sender, EventArgs e)
         {
@@ -252,16 +254,24 @@ namespace ExcelMerge
             }
         }
 
-        private void TxtDefaultDirectorySaveFiles_TextChanged(object sender, EventArgs e) =>
-            _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
+        private void TxtDefaultDirectorySaveFiles_TextChanged(object sender, EventArgs e) 
+            => _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
 
-        private void CbxHeader_SelectedIndexChanged(object sender, EventArgs e) =>
-            _appConfig.HeaderAction = (HeaderActionEnum)(sender as ComboBox).SelectedIndex;
+        private void CbxHeader_SelectedIndexChanged(object sender, EventArgs e) 
+            => _appConfig.HeaderAction = (HeaderActionEnum)(sender as ComboBox).SelectedIndex;
 
-        private void HeaderLength_ValueChanged(object sender, EventArgs e) =>
-             _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());
+        private void HeaderLength_ValueChanged(object sender, EventArgs e) 
+            =>  _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());
 
-        private void SaveApp_Validating(object sender, CancelEventArgs e) =>
-            AppConfigManager.Save(_appConfig);
+        private void SaveApp_Validating(object sender, CancelEventArgs e) 
+            => AppConfigManager.Save(_appConfig);
+
+        private void TxtSeparatorCSV_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty((sender as TextBox).Text))
+                _appConfig.SeparadorCSV = null;
+            else
+                _appConfig.SeparadorCSV = (sender as TextBox).Text[0];
+        }
     }
 }
