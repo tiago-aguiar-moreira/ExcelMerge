@@ -3,15 +3,14 @@ using ExcelMerge.Enumerator;
 using ExcelMerge.Model;
 using ExcelMerge.Utils;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.Data;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace ExcelMerge.Forms
 {
@@ -118,8 +117,7 @@ namespace ExcelMerge.Forms
             if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
             {
                 var values = ragenUsed.RowsUsed()
-                    .Select(s => s.Cell(1).Value.ToString().Split(','))
-                    .ToList();
+                    .Select(s => s.Cell(1).Value.ToString().Split(','));
 
                 foreach (var value in values)
                 {
