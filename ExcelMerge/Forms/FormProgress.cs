@@ -117,7 +117,7 @@ namespace ExcelMerge.Forms
             if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
             {
                 var values = ragenUsed.RowsUsed()
-                    .Select(s => s.Cell(1).Value.ToString().Split(','));
+                    .Select(s => s.Cell(1).Value.ToString().Split(separatorCSV));
 
                 foreach (var value in values)
                 {
