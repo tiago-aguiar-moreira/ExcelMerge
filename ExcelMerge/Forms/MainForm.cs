@@ -210,9 +210,6 @@ namespace ExcelMerge
             pnlSettings.Visible = _appConfig.ShowConfigs;
         }
 
-        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e) 
-            => _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
-
         private void BtnBrowserFolder_Click(object sender, EventArgs e)
         {
             using (CommonOpenFileDialog fileDialog = new CommonOpenFileDialog())
@@ -263,9 +260,6 @@ namespace ExcelMerge
         private void HeaderLength_ValueChanged(object sender, EventArgs e) 
             =>  _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());
 
-        private void SaveApp_Validating(object sender, CancelEventArgs e) 
-            => AppConfigManager.Save(_appConfig);
-
         private void TxtSeparatorCSV_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty((sender as TextBox).Text))
@@ -273,5 +267,11 @@ namespace ExcelMerge
             else
                 _appConfig.SeparadorCSV = (sender as TextBox).Text[0];
         }
+
+        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e)
+            => _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+            => AppConfigManager.Save(_appConfig);
     }
 }

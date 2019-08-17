@@ -244,7 +244,6 @@
             this.txtSeparatorCSV.Size = new System.Drawing.Size(84, 26);
             this.txtSeparatorCSV.TabIndex = 1;
             this.txtSeparatorCSV.TextChanged += new System.EventHandler(this.TxtSeparatorCSV_TextChanged);
-            this.txtSeparatorCSV.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // groupBox1
             // 
@@ -281,7 +280,6 @@
             0,
             0});
             this.txtHeaderLength.ValueChanged += new System.EventHandler(this.HeaderLength_ValueChanged);
-            this.txtHeaderLength.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // label1
             // 
@@ -312,7 +310,6 @@
             this.cbxHeader.Size = new System.Drawing.Size(261, 28);
             this.cbxHeader.TabIndex = 1;
             this.cbxHeader.SelectedIndexChanged += new System.EventHandler(this.CbxHeader_SelectedIndexChanged);
-            this.cbxHeader.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // btnBrowserFolder
             // 
@@ -343,7 +340,6 @@
             this.txtDefaultDirectorySaveFiles.Size = new System.Drawing.Size(889, 26);
             this.txtDefaultDirectorySaveFiles.TabIndex = 1;
             this.txtDefaultDirectorySaveFiles.TextChanged += new System.EventHandler(this.TxtDefaultDirectorySaveFiles_TextChanged);
-            this.txtDefaultDirectorySaveFiles.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // lblDefaultDirectorySaveFiles
             // 
@@ -374,7 +370,6 @@
             this.cbxAction.Size = new System.Drawing.Size(294, 28);
             this.cbxAction.TabIndex = 6;
             this.cbxAction.SelectedIndexChanged += new System.EventHandler(this.cbxAction_SelectedIndexChanged);
-            this.cbxAction.Validating += new System.ComponentModel.CancelEventHandler(this.SaveApp_Validating);
             // 
             // MainForm
             // 
@@ -388,6 +383,7 @@
             this.MinimumSize = new System.Drawing.Size(670, 470);
             this.Name = "MainForm";
             this.Text = "Excel Merge";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.panel1.ResumeLayout(false);
             this.pnlFiles.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridVwFiles)).EndInit();
