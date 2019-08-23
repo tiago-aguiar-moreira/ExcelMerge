@@ -14,15 +14,15 @@ namespace ExcelTools.Core
 
     public delegate void OnFinishedEventHandler(object sender, FinishedArgs e);
 
-    public class Excel
+    public class ExcelMerge
     {
         private ParamsMergeModel[] _fileMerge;
         private int _indexFile;
         private int _indexSheet;
         private bool _copiedOnlyFirstHeader;
         private bool _cancel;
-        private readonly string _destinyDirectory;
-        private readonly HeaderActionEnum _selectedHeaderAction;
+        private string _destinyDirectory;
+        private HeaderActionEnum _headerAction;
         public event OnProgressChangedEventHandler OnProgress;
         public event OnLogEventHandler OnLog;
         public event OnFinishedEventHandler OnFinished;
@@ -32,17 +32,15 @@ namespace ExcelTools.Core
         /// </summary>
         /// <param name="destinyDirectory">Directory for save the file generated</param>
         /// <param name="selectedHeaderAction">How to generate the header</param>
-        public Excel(string destinyDirectory, HeaderActionEnum selectedHeaderAction)
+        public ExcelMerge()
         {
-            _fileMerge = null;
-            _destinyDirectory = destinyDirectory;
-            _selectedHeaderAction = selectedHeaderAction;
+            
         }
 
         /// <summary>
         /// Destructor
         /// </summary>
-        ~Excel()
+        ~ExcelMerge()
         {
             OnProgress = null;
             OnLog = null;
@@ -50,16 +48,16 @@ namespace ExcelTools.Core
         }
 
         #region Private methods
-        private string NewFileName(string destinyDirectory)
-            => $"{destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
+        private string NewFileName()
+            => $"{_destinyDirectory}\\ExcelMerge_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.xlsx";
 
-        private bool LoadFromWorksheet(IXLWorksheet worksheet, out IList<string[]> list, char separatorCSV)
+        private bool LoadFromWorksheet(IXLWorksheet worksheet, out IList<string[]> list)
         {
             list = new List<string[]>();
             if (LoadFromWorksheet(worksheet, out IXLRange ragenUsed))
             {
                 var values = ragenUsed.RowsUsed()
-                    .Select(s => s.Cell(1).Value.ToString().Split(separatorCSV));
+                    .Select(s => s.Cell(1).Value.ToString().Split((char)_fileMerge[_indexFile].SeparatorCSV));
 
                 foreach (var value in values)
                 {
@@ -78,7 +76,7 @@ namespace ExcelTools.Core
             var finalCell = worksheet.LastCellUsed().Address;
             var cellAdressInitial = string.Empty;
 
-            switch (_selectedHeaderAction)
+            switch (_headerAction)
             {
                 case HeaderActionEnum.ConsiderFirstFile:
                     if (_copiedOnlyFirstHeader)
@@ -121,7 +119,7 @@ namespace ExcelTools.Core
         private void SaveFile(XLWorkbook workbook)
         {
             OnLog?.Invoke(this, new LogArgs(string.Empty, EventLog.BeforeSaveFile));
-            var newFileName = NewFileName(_destinyDirectory);
+            var newFileName = NewFileName();
             workbook.Worksheet(1).Columns().AdjustToContents();
             workbook.SaveAs(newFileName);
             OnLog?.Invoke(this, new LogArgs(newFileName, EventLog.AfterSaveFile));
@@ -135,11 +133,15 @@ namespace ExcelTools.Core
         public void Cancel()
             => _cancel = true;
 
-        public void Merge(ParamsMergeModel[] fileMerge)
+        public void Execute(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderActionEnum selectedHeaderAction)
         {
-            _fileMerge = fileMerge;
-            if (_fileMerge.Length <= 0)
+            if (fileMerge.Length <= 0)
                 return;
+
+            _destinyDirectory = destinyDirectory;
+            _headerAction = selectedHeaderAction;
+            _fileMerge = fileMerge;
+            
 
             using (var mainWorkbook = new XLWorkbook(XLEventTracking.Disabled)) //new Workbook
             {
@@ -172,7 +174,7 @@ namespace ExcelTools.Core
                             }
                             else
                             {
-                                if (LoadFromWorksheet(worksheet, out IList<string[]> list, (char)_fileMerge[_indexFile].SeparatorCSV))
+                                if (LoadFromWorksheet(worksheet, out IList<string[]> list))
                                     mainWorksheet.Cell($"A{GetRowCount(mainWorksheet)}").Value = list;
                             }
                         }
@@ -183,6 +185,5 @@ namespace ExcelTools.Core
             }
         }
         #endregion
-
     }
 }

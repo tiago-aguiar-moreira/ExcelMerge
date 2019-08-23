@@ -16,12 +16,16 @@ namespace ExcelTools.App.Forms
     {
         #region Form
 
+        private const string _msgLabelFile = "Progresso do processamento ({0})";
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
-        private readonly Excel _excel;
+        private readonly ExcelMerge _excel;
         private string _fileName;
         private ParamsMergeModel[] _fileMerge;
         private EndProcessActionEnum _processAction;
+        private string _destinyDirectory;
+        private HeaderActionEnum _headerAction;
         private DoWorkEventArgs _doWorkEventArgs;
+        private Stopwatch _stopwatch;
 
         public FormProgress(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderActionEnum headerAction, EndProcessActionEnum processAction)
         {
@@ -34,8 +38,12 @@ namespace ExcelTools.App.Forms
 
             _processAction = processAction;
             _fileMerge = fileMerge;
+            _destinyDirectory = destinyDirectory;
+            _headerAction = headerAction;
 
-            _excel = new Excel(destinyDirectory, headerAction);
+            _stopwatch = new Stopwatch();
+
+            _excel = new ExcelMerge();
             _excel.OnLog += new OnLogEventHandler(Log);
             _excel.OnProgress += new OnProgressChangedEventHandler(ProgressChanged);
             _excel.OnFinished += new OnFinishedEventHandler(Finished);
@@ -48,15 +56,14 @@ namespace ExcelTools.App.Forms
         {
             _doWorkEventArgs.Cancel = true;
             _excel.Cancel();
-            // Notifica a thread que o cancelamento foi solicitado.
-            // Cancela a tarefa DoWork 
             worker.CancelAsync();
-
-            //(sender as Button).Enabled = false;
         }
 
         private void FormProgress_FormClosing(object sender, FormClosingEventArgs e)
-            => btnCancelar_Click(sender, e);
+        {
+            StopCount();
+            btnCancelar_Click(sender, e);
+        }
         #endregion
 
         #region Events from Excel class
@@ -143,8 +150,6 @@ namespace ExcelTools.App.Forms
                     MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nRevise as configrurações.");
                     break;
             }
-
-            
         }
         #endregion
 
@@ -155,9 +160,11 @@ namespace ExcelTools.App.Forms
         private void backWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             _doWorkEventArgs = e;
-            _excel.Merge(_fileMerge);
+            timer.Start();
+            _stopwatch.Start();
+            _excel.Execute(_fileMerge, _destinyDirectory, _headerAction);
 
-            btnCancelar.BeginInvoke(new Action(() => 
+            btnCancelar.BeginInvoke(new Action(() =>
             {
                 btnCancelar.Enabled = false;
             }));
@@ -168,6 +175,8 @@ namespace ExcelTools.App.Forms
         /// </summary>
         private void backWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            StopCount();
+
             if (e.Cancelled)
             {
                 MessageBox.Show(
@@ -176,7 +185,6 @@ namespace ExcelTools.App.Forms
                     "Processamento",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-                Close();
             }
             else if (e.Error != null)
             {
@@ -186,7 +194,6 @@ namespace ExcelTools.App.Forms
                     "Processamento",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                Close();
             }
             else
             {
@@ -204,5 +211,24 @@ namespace ExcelTools.App.Forms
             }));
         }
         #endregion
+
+        private void StopCount()
+        {
+            timer.Stop();
+            _stopwatch.Stop();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            TimeSpan timeElapsed = _stopwatch.Elapsed;
+
+            lblCrono.BeginInvoke(new Action(() =>
+            {
+                lblCrono.Text = string.Format("{0:D2}:{1:D2}:{2:D2}",
+                            timeElapsed.Hours,
+                            timeElapsed.Minutes,
+                            timeElapsed.Seconds);
+            }));
+        }
     }
 }
