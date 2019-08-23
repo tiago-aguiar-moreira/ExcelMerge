@@ -1,6 +1,6 @@
-﻿using ExcelMerge.Enumerator;
+﻿using ExcelTools.Core.Enumerator;
 
-namespace ExcelMerge.Model
+namespace ExcelTools.App.Model
 {
     public class AppConfigModel
     {

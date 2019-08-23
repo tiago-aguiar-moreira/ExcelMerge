@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExcelMerge.Properties {
+namespace ExcelTools.Properties {
     using System;
     
     

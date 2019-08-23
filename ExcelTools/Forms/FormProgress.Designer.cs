@@ -1,4 +1,4 @@
-﻿namespace ExcelMerge.Forms
+﻿namespace ExcelTools.App.Forms
 {
     partial class FormProgress
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.backWorker = new System.ComponentModel.BackgroundWorker();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -37,18 +36,12 @@
             this.richTxt = new System.Windows.Forms.RichTextBox();
             this.lblFile = new System.Windows.Forms.Label();
             this.progBarFile = new System.Windows.Forms.ProgressBar();
+            this.worker = new System.ComponentModel.BackgroundWorker();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // backWorker
-            // 
-            this.backWorker.WorkerReportsProgress = true;
-            this.backWorker.WorkerSupportsCancellation = true;
-            this.backWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backWorker_DoWork);
-            this.backWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backWorker_RunWorkerCompleted);
             // 
             // panel3
             // 
@@ -88,6 +81,7 @@
             this.btnCancelar.TabIndex = 0;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
+            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // panel1
             // 
@@ -134,6 +128,12 @@
             this.progBarFile.Size = new System.Drawing.Size(665, 35);
             this.progBarFile.TabIndex = 2;
             // 
+            // worker
+            // 
+            this.worker.WorkerSupportsCancellation = true;
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backWorker_DoWork);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backWorker_RunWorkerCompleted);
+            // 
             // FormProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -149,6 +149,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Excel Merge";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormProgress_FormClosing);
+            this.Load += new System.EventHandler(this.FormProgress_Load);
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
@@ -159,7 +160,6 @@
         }
 
         #endregion
-        private System.ComponentModel.BackgroundWorker backWorker;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
@@ -168,5 +168,6 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.RichTextBox richTxt;
+        private System.ComponentModel.BackgroundWorker worker;
     }
 }

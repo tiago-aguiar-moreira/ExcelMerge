@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace ExcelMerge.Utils
+namespace ExcelTools.App.Utils
 {
     public static class FormUtils
     {

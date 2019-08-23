@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ExcelMerge
+namespace ExcelTools.App
 {
     static class Program
     {

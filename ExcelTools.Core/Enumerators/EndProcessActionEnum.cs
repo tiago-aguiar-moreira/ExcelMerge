@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ExcelMerge.Enumerator
+namespace ExcelTools.Core.Enumerator
 {
     public enum EndProcessActionEnum
     {

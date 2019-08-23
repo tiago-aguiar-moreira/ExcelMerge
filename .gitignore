@@ -1,4 +1,8 @@
-ExcelMerge/bin/
-ExcelMerge/obj/
-ExcelMerge/.vs/
-ExcelMerge/packages/
+ExcelTools/bin/
+ExcelTools/obj/
+ExcelTools/.vs/
+ExcelTools/packages/
+ExcelTools.Core/bin/
+ExcelTools.Core/obj/
+ExcelTools.Core/.vs/
+ExcelTools.Core/packages/

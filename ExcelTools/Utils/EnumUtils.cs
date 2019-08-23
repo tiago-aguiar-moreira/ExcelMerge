@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 
-namespace ExcelMerge.Utils
+namespace ExcelTools.App.Utils
 {
     public static class EnumUtils
     {

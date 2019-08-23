@@ -1,9 +1,9 @@
-﻿using ExcelMerge.Model;
-using ExcelMerge.Utils;
+﻿using ExcelTools.App.Model;
+using ExcelTools.App.Utils;
 using System.IO;
 using System.Windows.Forms;
 
-namespace ExcelMerge.Configuration
+namespace ExcelTools.App.Configuration
 {
     public static class AppConfigManager
     {

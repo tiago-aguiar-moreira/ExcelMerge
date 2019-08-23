@@ -1,9 +1,9 @@
 ﻿using ClosedXML.Excel;
 using System.IO;
 
-namespace ExcelMerge.Model
+namespace ExcelTools.Core.Model
 {
-    public class FileMergeModel
+    public class ParamsMergeModel
     {
         private string _fileName;
         private string _directory;
@@ -31,7 +31,7 @@ namespace ExcelMerge.Model
         }
         public byte HeaderLength { get; set; }
         public char? SeparatorCSV { get; set; }
-        public FileMergeModel(string path)
+        public ParamsMergeModel(string path)
         {
             FileName = path;
             Directory = path;

@@ -1,4 +1,4 @@
-﻿namespace ExcelMerge
+﻿namespace ExcelTools.App
 {
     partial class MainForm
     {
@@ -236,7 +236,7 @@
             // 
             // txtSeparatorCSV
             // 
-            this.txtSeparatorCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtSeparatorCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeparatorCSV.Location = new System.Drawing.Point(6, 48);
             this.txtSeparatorCSV.MaxLength = 1;
@@ -333,7 +333,7 @@
             // 
             // txtDefaultDirectorySaveFiles
             // 
-            this.txtDefaultDirectorySaveFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtDefaultDirectorySaveFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDefaultDirectorySaveFiles.Location = new System.Drawing.Point(4, 32);
             this.txtDefaultDirectorySaveFiles.Name = "txtDefaultDirectorySaveFiles";

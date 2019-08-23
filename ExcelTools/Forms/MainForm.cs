@@ -1,8 +1,9 @@
-﻿using ExcelMerge.Configuration;
-using ExcelMerge.Enumerator;
-using ExcelMerge.Forms;
-using ExcelMerge.Model;
-using ExcelMerge.Utils;
+﻿using ExcelTools.App.Configuration;
+using ExcelTools.App.Forms;
+using ExcelTools.App.Model;
+using ExcelTools.App.Utils;
+using ExcelTools.Core.Enumerator;
+using ExcelTools.Core.Model;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.ComponentModel;
@@ -11,12 +12,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace ExcelMerge
+namespace ExcelTools.App
 {
     public partial class MainForm : Form
     {
         private string _directoryApp;
-        private BindingList<FileMergeModel> _listFiles;
+        private BindingList<ParamsMergeModel> _listFiles;
         private ListChangedType[] _listEvents;
         private AppConfigModel _appConfig;
 
@@ -26,7 +27,7 @@ namespace ExcelMerge
             this.SetBaseConfigs();
 
             _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
-            _listFiles = new BindingList<FileMergeModel>();
+            _listFiles = new BindingList<ParamsMergeModel>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
             _appConfig = AppConfigManager.Load();
             _listEvents = new ListChangedType[]
@@ -89,7 +90,7 @@ namespace ExcelMerge
                     {
                         if (!_listFiles.Any(a => a.GetPath().ToLower() == item.ToLower()))
                         {
-                            _listFiles.Add(new FileMergeModel(item));
+                            _listFiles.Add(new ParamsMergeModel(item));
                         }
                     }
 
@@ -137,16 +138,10 @@ namespace ExcelMerge
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
                     directoryDestiny,
-                    _appConfig.HeaderAction);
+                    _appConfig.HeaderAction,
+                    _appConfig.EndProcessAction);
 
                 frmProgress.ShowDialog();
-
-                if (!string.IsNullOrEmpty(frmProgress.NewFile))
-                {
-                    ExecuteAction(frmProgress.NewFile, _appConfig.EndProcessAction);
-                }
-
-                frmProgress.Dispose();
             }
             catch (Exception ex)
             {
@@ -163,45 +158,7 @@ namespace ExcelMerge
             }
         }
 
-        private void ExecuteAction(string path, EndProcessActionEnum processAction)
-        {
-            switch (processAction)
-            {
-                case EndProcessActionEnum.None:
-                    break;
-                case EndProcessActionEnum.OpenFile:
-                    Process.Start(path);
-                    break;
-                case EndProcessActionEnum.OpenDir:
-                    Process.Start(Path.GetDirectoryName(path));
-                    break;
-                case EndProcessActionEnum.AskIfShouldOpenFile:
-                    if (MessageBox.Show(
-                        this,
-                        "Deseja abrir o arquivo gerado?",
-                        "Ação ao fim do processamento",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question) == DialogResult.Yes)
-                    {
-                        Process.Start(path);
-                    }
-                    break;
-                case EndProcessActionEnum.AskIfShouldOpenDir:
-                    if (MessageBox.Show(
-                        this,
-                        "Deseja abrir o diretório onde o arquivo foi gerado?",
-                        "Ação ao fim do processamento",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question) == DialogResult.Yes)
-                    {
-                        Process.Start(Path.GetDirectoryName(path));
-                    }
-                    break;
-                default:
-                    MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nRevise as configrurações.");
-                    break;
-            }
-        }
+        
 
         private void btnConfig_Click(object sender, EventArgs e)
         {

@@ -81,15 +81,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enumerator\SelectedEndProcessActionEnum.cs" />
-    <Compile Include="Enumerator\SelectedHeaderActionEnum.cs" />
     <Compile Include="Forms\FormProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormProgress.Designer.cs">
       <DependentUpon>FormProgress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\FileMergeModel.cs" />
     <Compile Include="Utils\EnumUtils.cs" />
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Utils\JSONUtils.cs" />
@@ -138,6 +135,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Excel.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExcelTools.Core\ExcelTools.Core.csproj">
+      <Project>{7ff3df0c-428f-44fd-9b26-2d316dd93e30}</Project>
+      <Name>ExcelTools.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
