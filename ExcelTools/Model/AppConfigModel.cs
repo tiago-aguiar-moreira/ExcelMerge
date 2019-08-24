@@ -9,8 +9,8 @@ namespace ExcelTools.App.Model
         public string DefaultDirectorySaveFiles { get; set; }
         public string RecentDirectorySaveFiles { get; set; }
         public byte HeaderLength { get; set; }
-        public bool ShowConfigs { get; set; }
         public char? SeparadorCSV { get; set; }
+        public string LastFileGenerated { get; set; }
 
         public AppConfigModel()
         {
@@ -20,6 +20,7 @@ namespace ExcelTools.App.Model
             RecentDirectorySaveFiles = string.Empty;
             HeaderLength = 1;
             SeparadorCSV = null;
+            LastFileGenerated = string.Empty;
         }
     }
 }

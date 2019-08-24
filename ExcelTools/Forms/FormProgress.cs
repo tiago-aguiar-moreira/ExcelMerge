@@ -1,4 +1,5 @@
-﻿using ExcelTools.App.Utils;
+﻿using ExcelTools.App.Configuration;
+using ExcelTools.App.Utils;
 using ExcelTools.Core;
 using ExcelTools.Core.Enumerator;
 using ExcelTools.Core.EventArgument;
@@ -16,16 +17,15 @@ namespace ExcelTools.App.Forms
     {
         #region Form
 
-        private const string _msgLabelFile = "Progresso do processamento ({0})";
         private const string _formatDateTime = "dd/MM/yyyy HH:mm:ss.fff";
-        private readonly ExcelMerge _excel;
-        private string _fileName;
-        private ParamsMergeModel[] _fileMerge;
-        private EndProcessActionEnum _processAction;
-        private string _destinyDirectory;
-        private HeaderActionEnum _headerAction;
         private DoWorkEventArgs _doWorkEventArgs;
-        private Stopwatch _stopwatch;
+        private string _fileName;
+        private readonly string _destinyDirectory;
+        private readonly ExcelMerge _exMerge;
+        private readonly ParamsMergeModel[] _fileMerge;
+        private readonly HeaderActionEnum _headerAction;
+        private readonly EndProcessActionEnum _processAction;
+        private readonly Stopwatch _stopwatch;
 
         public FormProgress(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderActionEnum headerAction, EndProcessActionEnum processAction)
         {
@@ -43,10 +43,10 @@ namespace ExcelTools.App.Forms
 
             _stopwatch = new Stopwatch();
 
-            _excel = new ExcelMerge();
-            _excel.OnLog += new OnLogEventHandler(Log);
-            _excel.OnProgress += new OnProgressChangedEventHandler(ProgressChanged);
-            _excel.OnFinished += new OnFinishedEventHandler(Finished);
+            _exMerge = new ExcelMerge();
+            _exMerge.OnLog += new OnLogEventHandler(EventLog);
+            _exMerge.OnProgress += new OnProgressChangedEventHandler(EventProgressChanged);
+            _exMerge.OnFinished += new OnFinishedEventHandler(EventFinished);
         }
 
         private void FormProgress_Load(object sender, EventArgs e)
@@ -55,7 +55,7 @@ namespace ExcelTools.App.Forms
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             _doWorkEventArgs.Cancel = true;
-            _excel.Cancel();
+            _exMerge.Cancel();
             worker.CancelAsync();
         }
 
@@ -67,62 +67,75 @@ namespace ExcelTools.App.Forms
         #endregion
 
         #region Events from Excel class
-        public void Log(object sender, LogArgs e)
+        public void EventLog(object sender, LogArgs log)
         {
-            richTxt.BeginInvoke(new Action(() =>
+            if (richTxt.Created)
             {
-                var text = $"{DateTime.Now.ToString(_formatDateTime, CultureInfo.InvariantCulture)}{Environment.NewLine}";
-
-                switch (e.ElementType)
+                richTxt.BeginInvoke(new Action(() =>
                 {
-                    case Core.Enumerator.EventLog.ReadFile:
-                        text += $"Arquivo: {e.ElementName}";
-                        _fileName = e.ElementName;
-                        break;
-                    case Core.Enumerator.EventLog.ReadSheet:
-                        text += $"Planilha: {e.ElementName}";
-                        break;
-                    case Core.Enumerator.EventLog.BeforeSaveFile:
-                        text += "Gerando arquivo...";
-                        break;
-                    case Core.Enumerator.EventLog.AfterSaveFile:
-                        text += $"Arquivo gerado: {e.ElementName}";
-                        break;
-                    default:
-                        break;
-                }
+                    var text = $"{DateTime.Now.ToString(_formatDateTime, CultureInfo.InvariantCulture)}{Environment.NewLine}";
 
-                text += $"{Environment.NewLine}";
-                text += $"{Environment.NewLine}";
+                    switch (log.ElementType)
+                    {
+                        case Core.Enumerator.EventLog.ReadFile:
+                            text += $"Arquivo: {log.ElementName}";
+                            _fileName = log.ElementName;
+                            break;
+                        case Core.Enumerator.EventLog.ReadSheet:
+                            text += $"Planilha: {log.ElementName}";
+                            break;
+                        case Core.Enumerator.EventLog.BeforeSaveFile:
+                            text += "Gerando arquivo...";
+                            break;
+                        case Core.Enumerator.EventLog.AfterSaveFile:
+                            text += $"Arquivo gerado: {log.ElementName}";
+                            break;
+                        default:
+                            break;
+                    }
 
-                richTxt.AppendText(text);
-            }));
+                    text += $"{Environment.NewLine}";
+                    text += $"{Environment.NewLine}";
+
+                    richTxt.AppendText(text);
+                }));
+            }
         }
 
-        public void ProgressChanged(object sender, ProgressArgs progress)
+        public void EventProgressChanged(object sender, ProgressArgs progress)
         {
-            progBarFile.BeginInvoke(new Action(() =>
+            if (progBarFile.Created)
             {
-                progBarFile.Value += progress.Value;
-            }));
+                progBarFile.BeginInvoke(new Action(() =>
+                {
+                    progBarFile.Value += progress.Value;
+                }));
+            }
 
-            lblFile.BeginInvoke(new Action(() =>
+            if (lblFile.Created)
             {
-                lblFile.Text = $"Arquivo {progBarFile.Value} de {progBarFile.Maximum} ({_fileName})";
-            }));
+                lblFile.BeginInvoke(new Action(() =>
+                {
+                    lblFile.Text = $"Arquivo {progBarFile.Value} de {progBarFile.Maximum} ({_fileName})";
+                }));
+            }
         }
 
-        public void Finished(object sender, FinishedArgs finishedArgs)
+        public void EventFinished(object sender, FinishedArgs finished)
         {
+            var appConfig = AppConfigManager.Load();
+            appConfig.LastFileGenerated = finished.FileName;
+            AppConfigManager.Save(appConfig);
+
             switch (_processAction)
             {
                 case EndProcessActionEnum.None:
                     break;
                 case EndProcessActionEnum.OpenFile:
-                    Process.Start(finishedArgs.FileName);
+                    Process.Start(finished.FileName);
                     break;
                 case EndProcessActionEnum.OpenDir:
-                    Process.Start(Path.GetDirectoryName(finishedArgs.FileName));
+                    Process.Start(Path.GetDirectoryName(finished.FileName));
                     break;
                 case EndProcessActionEnum.AskIfShouldOpenFile:
                     if (MessageBox.Show(
@@ -132,7 +145,7 @@ namespace ExcelTools.App.Forms
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        Process.Start(finishedArgs.FileName);
+                        Process.Start(finished.FileName);
                     }
                     break;
                 case EndProcessActionEnum.AskIfShouldOpenDir:
@@ -143,17 +156,17 @@ namespace ExcelTools.App.Forms
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        Process.Start(Path.GetDirectoryName(finishedArgs.FileName));
+                        Process.Start(Path.GetDirectoryName(finished.FileName));
                     }
                     break;
                 default:
-                    MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nRevise as configrurações.");
+                    MessageBox.Show("A ação configurada sobre o arquivo gerado é inválida!\nVerifique as configrurações.");
                     break;
             }
         }
         #endregion
 
-        #region Worker
+        #region Worker events
         /// <summary>
         /// Here we call our methods with the time-consuming tasks.
         /// </summary>
@@ -162,12 +175,15 @@ namespace ExcelTools.App.Forms
             _doWorkEventArgs = e;
             timer.Start();
             _stopwatch.Start();
-            _excel.Execute(_fileMerge, _destinyDirectory, _headerAction);
+            _exMerge.Execute(_fileMerge, _destinyDirectory, _headerAction);
 
-            btnCancelar.BeginInvoke(new Action(() =>
+            if (btnCancelar.Created)
             {
-                btnCancelar.Enabled = false;
-            }));
+                btnCancelar.BeginInvoke(new Action(() =>
+                {
+                    btnCancelar.Enabled = false;
+                }));
+            }
         }
 
         /// <summary>
@@ -177,38 +193,41 @@ namespace ExcelTools.App.Forms
         {
             StopCount();
 
-            if (e.Cancelled)
+            if (Created)
             {
-                MessageBox.Show(
-                    this,
-                    "Operação cancelada pelo usuário!",
-                    "Processamento",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-            else if (e.Error != null)
-            {
-                MessageBox.Show(
-                    this,
-                    e.Error.Message,
-                    "Processamento",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-            else
-            {
-                MessageBox.Show(
-                    this,
-                    "Processamento concluído com sucesso!",
-                    "Processamento",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
+                if (e.Cancelled)
+                {
+                    MessageBox.Show(
+                        this,
+                        "Operação cancelada pelo usuário!",
+                        "Processamento",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                else if (e.Error != null)
+                {
+                    MessageBox.Show(
+                        this,
+                        e.Error.Message,
+                        "Processamento",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        this,
+                        "Processamento concluído com sucesso!",
+                        "Processamento",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
 
-            BeginInvoke(new Action(() =>
-            {
-                Close();
-            }));
+                BeginInvoke(new Action(() =>
+                {
+                    Close();
+                }));
+            }
         }
         #endregion
 

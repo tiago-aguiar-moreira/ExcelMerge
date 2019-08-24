@@ -31,18 +31,16 @@
             this.components = new System.ComponentModel.Container();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.panel4 = new System.Windows.Forms.Panel();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblCrono = new System.Windows.Forms.Label();
             this.richTxt = new System.Windows.Forms.RichTextBox();
             this.lblFile = new System.Windows.Forms.Label();
             this.progBarFile = new System.Windows.Forms.ProgressBar();
             this.worker = new System.ComponentModel.BackgroundWorker();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.lblCrono = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.panel4.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,37 +56,26 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.panel4);
+            this.panel2.Controls.Add(this.btnCancelar);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 464);
+            this.panel2.Location = new System.Drawing.Point(0, 477);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(573, 72);
+            this.panel2.Size = new System.Drawing.Size(573, 59);
             this.panel2.TabIndex = 12;
-            // 
-            // panel4
-            // 
-            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel4.Controls.Add(this.btnCancelar);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel4.Location = new System.Drawing.Point(0, 0);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(573, 72);
-            this.panel4.TabIndex = 0;
             // 
             // btnCancelar
             // 
             this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancelar.Location = new System.Drawing.Point(365, 13);
+            this.btnCancelar.Location = new System.Drawing.Point(441, 17);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(194, 45);
-            this.btnCancelar.TabIndex = 0;
+            this.btnCancelar.Size = new System.Drawing.Size(120, 30);
+            this.btnCancelar.TabIndex = 1;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
-            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // panel1
             // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.lblCrono);
             this.panel1.Controls.Add(this.richTxt);
             this.panel1.Controls.Add(this.lblFile);
@@ -99,6 +86,17 @@
             this.panel1.Size = new System.Drawing.Size(573, 536);
             this.panel1.TabIndex = 0;
             // 
+            // lblCrono
+            // 
+            this.lblCrono.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCrono.AutoSize = true;
+            this.lblCrono.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCrono.Location = new System.Drawing.Point(447, 437);
+            this.lblCrono.Name = "lblCrono";
+            this.lblCrono.Size = new System.Drawing.Size(120, 31);
+            this.lblCrono.TabIndex = 3;
+            this.lblCrono.Text = "00:00:00";
+            // 
             // richTxt
             // 
             this.richTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -107,7 +105,7 @@
             this.richTxt.Location = new System.Drawing.Point(4, 3);
             this.richTxt.Name = "richTxt";
             this.richTxt.ReadOnly = true;
-            this.richTxt.Size = new System.Drawing.Size(561, 395);
+            this.richTxt.Size = new System.Drawing.Size(563, 406);
             this.richTxt.TabIndex = 0;
             this.richTxt.Text = "";
             // 
@@ -116,7 +114,7 @@
             this.lblFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblFile.AutoSize = true;
             this.lblFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFile.Location = new System.Drawing.Point(4, 401);
+            this.lblFile.Location = new System.Drawing.Point(4, 412);
             this.lblFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFile.Name = "lblFile";
             this.lblFile.Size = new System.Drawing.Size(217, 20);
@@ -127,10 +125,10 @@
             // 
             this.progBarFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progBarFile.Location = new System.Drawing.Point(4, 423);
+            this.progBarFile.Location = new System.Drawing.Point(3, 437);
             this.progBarFile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progBarFile.Name = "progBarFile";
-            this.progBarFile.Size = new System.Drawing.Size(437, 31);
+            this.progBarFile.Size = new System.Drawing.Size(439, 31);
             this.progBarFile.TabIndex = 2;
             // 
             // worker
@@ -144,17 +142,6 @@
             this.timer.Enabled = true;
             this.timer.Interval = 1000;
             this.timer.Tick += new System.EventHandler(this.Timer_Tick);
-            // 
-            // lblCrono
-            // 
-            this.lblCrono.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblCrono.AutoSize = true;
-            this.lblCrono.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCrono.Location = new System.Drawing.Point(448, 423);
-            this.lblCrono.Name = "lblCrono";
-            this.lblCrono.Size = new System.Drawing.Size(120, 31);
-            this.lblCrono.TabIndex = 3;
-            this.lblCrono.Text = "00:00:00";
             // 
             // FormProgress
             // 
@@ -174,7 +161,6 @@
             this.Load += new System.EventHandler(this.FormProgress_Load);
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
-            this.panel4.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -187,11 +173,10 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblFile;
         private System.Windows.Forms.ProgressBar progBarFile;
-        private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.RichTextBox richTxt;
         private System.ComponentModel.BackgroundWorker worker;
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Label lblCrono;
+        private System.Windows.Forms.Button btnCancelar;
     }
 }

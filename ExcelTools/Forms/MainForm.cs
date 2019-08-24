@@ -1,13 +1,11 @@
 ﻿using ExcelTools.App.Configuration;
 using ExcelTools.App.Forms;
-using ExcelTools.App.Model;
 using ExcelTools.App.Utils;
-using ExcelTools.Core.Enumerator;
 using ExcelTools.Core.Model;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using ExcelTools.Forms;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,20 +14,17 @@ namespace ExcelTools.App
 {
     public partial class MainForm : Form
     {
-        private string _directoryApp;
         private BindingList<ParamsMergeModel> _listFiles;
         private ListChangedType[] _listEvents;
-        private AppConfigModel _appConfig;
 
         public MainForm()
         {
             InitializeComponent();
             this.SetBaseConfigs();
 
-            _directoryApp = Path.GetDirectoryName(Application.ExecutablePath);
             _listFiles = new BindingList<ParamsMergeModel>();
             _listFiles.ListChanged += new ListChangedEventHandler(list_ListChanged);
-            _appConfig = AppConfigManager.Load();
+            
             _listEvents = new ListChangedType[]
             {
                 ListChangedType.ItemAdded,
@@ -38,51 +33,37 @@ namespace ExcelTools.App
             };
 
             gridVwFiles.DataSource = _listFiles;
-            txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
-            txtHeaderLength.Value = _appConfig.HeaderLength;
-            txtSeparatorCSV.Text = _appConfig.SeparadorCSV == null ? string.Empty : _appConfig.SeparadorCSV.ToString();
-            LoadEndProcessoAction(_appConfig.EndProcessAction);
-            LoadHeaderAction(_appConfig.HeaderAction);
-            pnlSettings.Visible = _appConfig.ShowConfigs;
+            EnableButtons();
+            SetLastFile();
         }
 
-        private void LoadEndProcessoAction(EndProcessActionEnum selectedEndProcessAction)
-        {
-            var descriptions = EnumUtils.GetDescription<EndProcessActionEnum>();
-
-            descriptions.ToList().ForEach(f => cbxAction.Items.Add(f));
-
-            cbxAction.SelectedIndex = (int)selectedEndProcessAction;
-        }
-
-        private void LoadHeaderAction(HeaderActionEnum selectedHeaderAction)
-        {
-            var descriptions = EnumUtils.GetDescription<HeaderActionEnum>();
-
-            descriptions.ToList().ForEach(f => cbxHeader.Items.Add(f));
-
-            cbxHeader.SelectedIndex = (int)selectedHeaderAction;
-        }
+        private string GetDirectoryApp()
+            => Path.GetDirectoryName(Application.ExecutablePath);
 
         private void list_ListChanged(object sender, ListChangedEventArgs e)
         {
             if (_listEvents.Contains(e.ListChangedType))
             {
-                btnRun.Enabled = btnDelete.Enabled = btnDeleteAll.Enabled = _listFiles.Any();
+                EnableButtons();
             }
         }
 
+        private void EnableButtons()
+            => btnRun.Enabled = btnDelete.Enabled = btnDeleteAll.Enabled = _listFiles.Any();
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            var appConfig = AppConfigManager.Load();
+
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                ofd.InitialDirectory = _directoryApp;
+                ofd.InitialDirectory = GetDirectoryApp();
                 ofd.Filter = "Todos os arquivos (*.*)|*.*|Todos os Arquivos do Excel (*.xlsx;*.xls)|*.xlsx;*.xls";
                 ofd.FilterIndex = 2;
                 ofd.RestoreDirectory = true;
                 ofd.Multiselect = true;
                 ofd.Title = Text;
-                ofd.InitialDirectory = _appConfig.RecentDirectorySaveFiles;
+                ofd.InitialDirectory = appConfig.RecentDirectorySaveFiles;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
@@ -94,8 +75,8 @@ namespace ExcelTools.App
                         }
                     }
 
-                    _appConfig.RecentDirectorySaveFiles = _listFiles.LastOrDefault().Directory;
-                    AppConfigManager.Save(_appConfig);
+                    appConfig.RecentDirectorySaveFiles = _listFiles.LastOrDefault().Directory;
+                    AppConfigManager.Save(appConfig);
                 }
             }
         }
@@ -120,28 +101,30 @@ namespace ExcelTools.App
         {
             try
             {
-                (sender as Button).Enabled = !(sender as Button).Enabled;
+                var appConfig = AppConfigManager.Load();
 
-                var directoryDestiny = string.IsNullOrEmpty(_appConfig.DefaultDirectorySaveFiles)
-                    ? _directoryApp 
-                    : _appConfig.DefaultDirectorySaveFiles;
+                var directoryDestiny = string.IsNullOrEmpty(appConfig.DefaultDirectorySaveFiles)
+                    ? GetDirectoryApp()
+                    : appConfig.DefaultDirectorySaveFiles;
 
                 foreach (var file in _listFiles)
                 {
                     if (file.HeaderLength <= 0)
-                        file.HeaderLength = byte.Parse(txtHeaderLength.Value.ToString());
+                        file.HeaderLength = appConfig.HeaderLength;
 
                     if (file.SeparatorCSV == null)
-                        file.SeparatorCSV = txtSeparatorCSV.Text[0];
+                        file.SeparatorCSV = appConfig.SeparadorCSV;
                 }
 
                 var frmProgress = new FormProgress(
                     _listFiles.ToArray(),
                     directoryDestiny,
-                    _appConfig.HeaderAction,
-                    _appConfig.EndProcessAction);
+                    appConfig.HeaderAction,
+                    appConfig.EndProcessAction);
 
                 frmProgress.ShowDialog();
+                frmProgress.Dispose();
+                SetLastFile();
             }
             catch (Exception ex)
             {
@@ -152,83 +135,20 @@ namespace ExcelTools.App
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-            finally
-            {
-                (sender as Button).Enabled = !(sender as Button).Enabled;
-            }
         }
 
-        
-
-        private void btnConfig_Click(object sender, EventArgs e)
+        private void SetLastFile()
         {
-            _appConfig.ShowConfigs = !_appConfig.ShowConfigs;
-            AppConfigManager.Save(_appConfig);
-            pnlSettings.Visible = _appConfig.ShowConfigs;
+            var lastFileGenerated = AppConfigManager.Load().LastFileGenerated;
+            stLabel.Text = string.Format("Último arquivo gerado: {0}", lastFileGenerated);
+            stLabel.ForeColor = File.Exists(lastFileGenerated) ? SystemColors.ControlText : Color.Red;
         }
 
-        private void BtnBrowserFolder_Click(object sender, EventArgs e)
+        private void ToolStripButton1_Click(object sender, EventArgs e)
         {
-            using (CommonOpenFileDialog fileDialog = new CommonOpenFileDialog())
-            {
-                fileDialog.IsFolderPicker = true;
-                fileDialog.InitialDirectory = _appConfig.DefaultDirectorySaveFiles;
-
-                if (fileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    txtDefaultDirectorySaveFiles.Text = fileDialog.FileName;
-                }
-            }
+            var frm = new FormConfig();
+            frm.ShowDialog();
+            frm.Dispose();
         }
-
-        private void TxtDefaultDirectorySaveFiles_Validating(object sender, CancelEventArgs e)
-        {
-            var textBox = sender as TextBox;
-            if (string.IsNullOrEmpty(textBox.Text.Trim()))
-            {
-                return;
-            }
-
-            if (Directory.Exists(textBox.Text.Trim()))
-            {
-                _appConfig.DefaultDirectorySaveFiles = textBox.Text.Trim();
-                AppConfigManager.Save(_appConfig);
-            }
-            else
-            {
-                MessageBox.Show(
-                    this,
-                    "O diretório selecionado não é válido!",
-                    "Diretório inválido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation);
-
-                textBox.Clear();
-                textBox.Focus();
-            }
-        }
-
-        private void TxtDefaultDirectorySaveFiles_TextChanged(object sender, EventArgs e) 
-            => _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
-
-        private void CbxHeader_SelectedIndexChanged(object sender, EventArgs e) 
-            => _appConfig.HeaderAction = (HeaderActionEnum)(sender as ComboBox).SelectedIndex;
-
-        private void HeaderLength_ValueChanged(object sender, EventArgs e) 
-            =>  _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());
-
-        private void TxtSeparatorCSV_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty((sender as TextBox).Text))
-                _appConfig.SeparadorCSV = null;
-            else
-                _appConfig.SeparadorCSV = (sender as TextBox).Text[0];
-        }
-
-        private void cbxAction_SelectedIndexChanged(object sender, EventArgs e)
-            => _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-            => AppConfigManager.Save(_appConfig);
     }
 }
