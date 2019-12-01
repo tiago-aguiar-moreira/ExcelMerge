@@ -23,11 +23,11 @@ namespace ExcelTools.App.Forms
         private readonly string _destinyDirectory;
         private readonly ExcelMerge _exMerge;
         private readonly ParamsMergeModel[] _fileMerge;
-        private readonly HeaderActionEnum _headerAction;
-        private readonly EndProcessActionEnum _processAction;
+        private readonly HeaderAction _headerAction;
+        private readonly EndProcessAction _processAction;
         private readonly Stopwatch _stopwatch;
 
-        public FormProgress(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderActionEnum headerAction, EndProcessActionEnum processAction)
+        public FormProgress(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderAction headerAction, EndProcessAction processAction)
         {
             InitializeComponent();
             this.SetBaseConfigs();
@@ -129,15 +129,15 @@ namespace ExcelTools.App.Forms
 
             switch (_processAction)
             {
-                case EndProcessActionEnum.None:
+                case EndProcessAction.None:
                     break;
-                case EndProcessActionEnum.OpenFile:
+                case EndProcessAction.OpenFile:
                     Process.Start(finished.FileName);
                     break;
-                case EndProcessActionEnum.OpenDir:
+                case EndProcessAction.OpenDir:
                     Process.Start(Path.GetDirectoryName(finished.FileName));
                     break;
-                case EndProcessActionEnum.AskIfShouldOpenFile:
+                case EndProcessAction.AskIfShouldOpenFile:
                     if (MessageBox.Show(
                         this,
                         "Deseja abrir o arquivo gerado?",
@@ -148,7 +148,7 @@ namespace ExcelTools.App.Forms
                         Process.Start(finished.FileName);
                     }
                     break;
-                case EndProcessActionEnum.AskIfShouldOpenDir:
+                case EndProcessAction.AskIfShouldOpenDir:
                     if (MessageBox.Show(
                         this,
                         "Deseja abrir o diretório onde o arquivo foi gerado?",

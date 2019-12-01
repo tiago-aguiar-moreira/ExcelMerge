@@ -2,7 +2,6 @@
 using ExcelTools.App.Forms;
 using ExcelTools.App.Utils;
 using ExcelTools.Core.Model;
-using ExcelTools.Forms;
 using System;
 using System.ComponentModel;
 using System.Drawing;

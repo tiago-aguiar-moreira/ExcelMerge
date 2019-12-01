@@ -22,7 +22,7 @@ namespace ExcelTools.Core
         private bool _copiedOnlyFirstHeader;
         private bool _cancel;
         private string _destinyDirectory;
-        private HeaderActionEnum _headerAction;
+        private HeaderAction _headerAction;
         public event OnProgressChangedEventHandler OnProgress;
         public event OnLogEventHandler OnLog;
         public event OnFinishedEventHandler OnFinished;
@@ -78,7 +78,7 @@ namespace ExcelTools.Core
 
             switch (_headerAction)
             {
-                case HeaderActionEnum.ConsiderFirstFile:
+                case HeaderAction.ConsiderFirstFile:
                     if (_copiedOnlyFirstHeader)
                     {
                         cellAdressInitial = $"A{numberRow + 1}";
@@ -92,10 +92,10 @@ namespace ExcelTools.Core
                         }
                     }
                     break;
-                case HeaderActionEnum.IgnoreAll:
+                case HeaderAction.IgnoreAll:
                     cellAdressInitial = $"A{numberRow + 1}";
                     break;
-                case HeaderActionEnum.None:
+                case HeaderAction.None:
                 default:
                     cellAdressInitial = "A1";
                     break;
@@ -133,7 +133,7 @@ namespace ExcelTools.Core
         public void Cancel()
             => _cancel = true;
 
-        public void Execute(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderActionEnum selectedHeaderAction)
+        public void Execute(ParamsMergeModel[] fileMerge, string destinyDirectory, HeaderAction selectedHeaderAction)
         {
             if (fileMerge.Length <= 0)
                 return;

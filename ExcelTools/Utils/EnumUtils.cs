@@ -1,16 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ExcelTools.App.Utils
 {
     public static class EnumUtils
     {
-        public static string[] GetDescription<T>() where T : struct
+        public static void LoadComboFromEnum<T>(this ComboBox cbx, int selectedIndex) where T : struct
+        {
+            var descriptions = GetDescription<T>();
+
+            descriptions.ToList().ForEach(f => cbx.Items.Add(f));
+
+            cbx.SelectedIndex = selectedIndex;
+        }
+
+        public static IEnumerable<string> GetDescription<T>() where T : struct
         {
             var descriptions = Enum.GetValues(typeof(T)).Cast<T>();
 
-            return descriptions.Select(s => GetDescriptionFromValue(s)).ToArray();
+            return descriptions.Select(s => GetDescriptionFromValue(s));
         }
 
         public static string GetDescriptionFromValue<T>(T enumerationValue) where T : struct

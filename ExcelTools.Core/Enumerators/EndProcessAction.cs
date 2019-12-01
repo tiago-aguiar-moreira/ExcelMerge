@@ -2,7 +2,7 @@
 
 namespace ExcelTools.Core.Enumerator
 {
-    public enum EndProcessActionEnum
+    public enum EndProcessAction
     {
         [Description("Nenhuma")]
         None = 0,

@@ -156,7 +156,7 @@
             this.MinimizeBox = false;
             this.Name = "FormProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Excel Merge";
+            this.Text = "Processamento";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormProgress_FormClosing);
             this.Load += new System.EventHandler(this.FormProgress_Load);
             this.panel3.ResumeLayout(false);

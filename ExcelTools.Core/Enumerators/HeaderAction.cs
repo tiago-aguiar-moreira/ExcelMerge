@@ -2,7 +2,7 @@
 
 namespace ExcelTools.Core.Enumerator
 {
-    public enum HeaderActionEnum
+    public enum HeaderAction
     {
         [Description("Nenhuma ação")]
         None = 0,

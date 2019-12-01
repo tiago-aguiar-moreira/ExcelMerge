@@ -1,4 +1,5 @@
 ﻿using ExcelTools.App.Configuration;
+using ExcelTools.App.Enumerators;
 using ExcelTools.App.Model;
 using ExcelTools.App.Utils;
 using ExcelTools.Core.Enumerator;
@@ -6,10 +7,9 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
-namespace ExcelTools.Forms
+namespace ExcelTools.App
 {
     public partial class FormConfig : Form
     {
@@ -25,26 +25,10 @@ namespace ExcelTools.Forms
             txtDefaultDirectorySaveFiles.Text = _appConfig.DefaultDirectorySaveFiles;
             txtHeaderLength.Value = _appConfig.HeaderLength;
             txtSeparatorCSV.Text = _appConfig?.SeparadorCSV?.ToString() ?? string.Empty;
-            LoadEndProcessoAction(_appConfig.EndProcessAction);
-            LoadHeaderAction(_appConfig.HeaderAction);
-        }
 
-        private void LoadEndProcessoAction(EndProcessActionEnum selectedEndProcessAction)
-        {
-            var descriptions = EnumUtils.GetDescription<EndProcessActionEnum>();
-
-            descriptions.ToList().ForEach(f => cbxAction.Items.Add(f));
-
-            cbxAction.SelectedIndex = (int)selectedEndProcessAction;
-        }
-
-        private void LoadHeaderAction(HeaderActionEnum selectedHeaderAction)
-        {
-            var descriptions = EnumUtils.GetDescription<HeaderActionEnum>();
-
-            descriptions.ToList().ForEach(f => cbxHeader.Items.Add(f));
-
-            cbxHeader.SelectedIndex = (int)selectedHeaderAction;
+            cbxAction.LoadComboFromEnum<EndProcessAction>((int)_appConfig.EndProcessAction);
+            cbxHeader.LoadComboFromEnum<HeaderAction>((int)_appConfig.HeaderAction);
+            cbxLanguage.LoadComboFromEnum<SystemLanguage>((int)_appConfig.Language);
         }
 
         private void BtnBrowserFolder_Click(object sender, EventArgs e)
@@ -92,7 +76,7 @@ namespace ExcelTools.Forms
             => _appConfig.DefaultDirectorySaveFiles = (sender as TextBox).Text;
 
         private void CbxHeader_SelectedIndexChanged(object sender, EventArgs e)
-            => _appConfig.HeaderAction = (HeaderActionEnum)(sender as ComboBox).SelectedIndex;
+            => _appConfig.HeaderAction = (HeaderAction)(sender as ComboBox).SelectedIndex;
 
         private void HeaderLength_ValueChanged(object sender, EventArgs e)
             => _appConfig.HeaderLength = byte.Parse(Math.Truncate((sender as NumericUpDown).Value).ToString());
@@ -106,12 +90,15 @@ namespace ExcelTools.Forms
         }
 
         private void cbxAction_SelectedIndexChanged(object sender, EventArgs e)
-            => _appConfig.EndProcessAction = (EndProcessActionEnum)(sender as ComboBox).SelectedIndex;
+            => _appConfig.EndProcessAction = (EndProcessAction)(sender as ComboBox).SelectedIndex;
 
         private void BtnSalvar_Click(object sender, EventArgs e)
         {
             AppConfigManager.Save(_appConfig);
             Close();
         }
+
+        private void CbxLanguage_SelectedIndexChanged(object sender, EventArgs e)
+            => _appConfig.Language = (SystemLanguage)(sender as ComboBox).SelectedIndex;
     }
 }

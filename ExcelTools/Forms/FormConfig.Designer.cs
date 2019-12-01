@@ -1,4 +1,4 @@
-﻿namespace ExcelTools.Forms
+﻿namespace ExcelTools.App
 {
     partial class FormConfig
     {
@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormConfig));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbxFile = new System.Windows.Forms.GroupBox();
             this.txtHeaderLength = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.lblHeader = new System.Windows.Forms.Label();
@@ -50,7 +50,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnSalvar = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.gbxFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtHeaderLength)).BeginInit();
             this.gbxGeneral.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -58,7 +58,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.groupBox2);
+            this.panel1.Controls.Add(this.gbxFile);
             this.panel1.Controls.Add(this.gbxGeneral);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -68,27 +68,27 @@
             this.panel1.Size = new System.Drawing.Size(738, 393);
             this.panel1.TabIndex = 0;
             // 
-            // groupBox2
+            // gbxFile
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.gbxFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.txtHeaderLength);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.lblHeader);
-            this.groupBox2.Controls.Add(this.cbxHeader);
-            this.groupBox2.Controls.Add(this.btnBrowserFolder);
-            this.groupBox2.Controls.Add(this.lblSeparador);
-            this.groupBox2.Controls.Add(this.txtSeparatorCSV);
-            this.groupBox2.Controls.Add(this.txtDefaultDirectorySaveFiles);
-            this.groupBox2.Controls.Add(this.lblDefaultDirectorySaveFiles);
-            this.groupBox2.Controls.Add(this.lblAction);
-            this.groupBox2.Controls.Add(this.cbxAction);
-            this.groupBox2.Location = new System.Drawing.Point(12, 114);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(714, 209);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = " Arquivo ";
+            this.gbxFile.Controls.Add(this.txtHeaderLength);
+            this.gbxFile.Controls.Add(this.label1);
+            this.gbxFile.Controls.Add(this.lblHeader);
+            this.gbxFile.Controls.Add(this.cbxHeader);
+            this.gbxFile.Controls.Add(this.btnBrowserFolder);
+            this.gbxFile.Controls.Add(this.lblSeparador);
+            this.gbxFile.Controls.Add(this.txtSeparatorCSV);
+            this.gbxFile.Controls.Add(this.txtDefaultDirectorySaveFiles);
+            this.gbxFile.Controls.Add(this.lblDefaultDirectorySaveFiles);
+            this.gbxFile.Controls.Add(this.lblAction);
+            this.gbxFile.Controls.Add(this.cbxAction);
+            this.gbxFile.Location = new System.Drawing.Point(12, 114);
+            this.gbxFile.Name = "gbxFile";
+            this.gbxFile.Size = new System.Drawing.Size(714, 209);
+            this.gbxFile.TabIndex = 1;
+            this.gbxFile.TabStop = false;
+            this.gbxFile.Text = " Arquivo ";
             // 
             // txtHeaderLength
             // 
@@ -233,6 +233,7 @@
             this.gbxGeneral.Size = new System.Drawing.Size(714, 96);
             this.gbxGeneral.TabIndex = 0;
             this.gbxGeneral.TabStop = false;
+            this.gbxGeneral.Tag = "Config_Label_General";
             this.gbxGeneral.Text = " Geral ";
             // 
             // lblLanguage
@@ -254,6 +255,7 @@
             this.cbxLanguage.Name = "cbxLanguage";
             this.cbxLanguage.Size = new System.Drawing.Size(257, 28);
             this.cbxLanguage.TabIndex = 1;
+            this.cbxLanguage.SelectedIndexChanged += new System.EventHandler(this.CbxLanguage_SelectedIndexChanged);
             // 
             // panel2
             // 
@@ -290,8 +292,8 @@
             this.Name = "FormConfig";
             this.Text = "Configurações";
             this.panel1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.gbxFile.ResumeLayout(false);
+            this.gbxFile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtHeaderLength)).EndInit();
             this.gbxGeneral.ResumeLayout(false);
             this.gbxGeneral.PerformLayout();
@@ -306,7 +308,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnSalvar;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox gbxFile;
         private System.Windows.Forms.NumericUpDown txtHeaderLength;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblHeader;

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E79C6BB3-5A68-43CE-9E3C-4132DF2FA275}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ExcelTools</RootNamespace>
-    <AssemblyName>ExcelTools</AssemblyName>
+    <RootNamespace>ExcelTools.App</RootNamespace>
+    <AssemblyName>ExcelTools.App</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -81,6 +81,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enumerators\SystemLanguage.cs" />
     <Compile Include="Forms\FormConfig.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,7 +98,7 @@
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Utils\JSONUtils.cs" />
     <Compile Include="Model\AppConfigModel.cs" />
-    <Compile Include="Configuration\AppConfigurationManager.cs" />
+    <Compile Include="Configuration\AppConfigManager.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,6 +151,9 @@
       <Project>{7ff3df0c-428f-44fd-9b26-2d316dd93e30}</Project>
       <Name>ExcelTools.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Lang\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
